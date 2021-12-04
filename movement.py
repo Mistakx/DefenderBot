@@ -47,32 +47,32 @@ def followMainLine(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor
         robot.drive(followingMovementSpeed, turnRate)
 
         if (lineColorSensor.color() == enemyLineColor):
+
+            #* Robot stops, sets itself up, and rotates to the enemy line
             robot.stop()
             ev3.speaker.beep()
-
             followMainLineTime(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, enemyLineReflection, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360, 2000)
             ev3.speaker.beep()
-
             robot.turn(calibratedTurn(-110 * negativeTurnCalibration, turnCalibrationTo360))
+            
+            #* Robot follows the enemy line until the bottle
             followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
-            break
-            # #* Walk to bottle
-            # timer = StopWatch()
-            # walkToBottleBeginning = timer.time()
-            # walkUntilBottle(robot, distanceSensor)
-            # timeWalked = timer.time() - walkToBottleBeginning
-            # color.sayColor(ev3, enemyColorSensor)
-            # ev3.speaker.say('Bottle')
 
-            # #* Walk back to line
-            # print("Time Walked: ", timeWalked)
-            # # robot.straight(- int(timeWalked)) # Walk backwards the same amount o time it did until reaching the bottle 
-            # walkBackToLine(robot, timeWalked)
-            # robot.turn(calibratedTurn(90, turnCalibrationTo360))
-            # robot.straight(100)
+            #* Robot goes backwards until the black tape and rotates back to the main line
+            ev3.speaker.beep()
+            followEnemyLineUntilTime(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360, 1000)
+            #robot.straight(-100)
+            followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
+            ev3.speaker.beep()
+            robot.turn(calibratedTurn(90 * negativeTurnCalibration, turnCalibrationTo360))
+
+            #* Robot keeps following the main line
+            followMainLineTime(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, enemyLineReflection, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360, 5000)
+
+            break
            
         # You can wait for a short time or do other things in this loop.
-        wait(1)
+        # wait(1)
 
 def followMainLineTime(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, enemyLineReflection, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360, timeToFollow):
 
@@ -108,10 +108,6 @@ def followMainLineTime(ev3, robot, lineColorSensor, enemyColorSensor, distanceSe
         # You can wait for a short time or do other things in this loop.
         wait(1)
 
-# def walkBackToLine(robot, timeWalked):
-#     robot.turn(calibration.calibratedTurn(180, turnCalibrationTo360))
-
-
 def followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360):
 
     # When black            # When white 
@@ -121,6 +117,9 @@ def followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, di
 
     threshold = (enemyLineBlue + boardBlue) / 2
     print("Threshold: ", threshold)
+
+    timer = StopWatch()
+    followEnemyLineBeginning = timer.time()
 
     while True:
 
@@ -143,16 +142,56 @@ def followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, di
 
         distanceToBottle = distanceSensor.distance()
 
+        # Stop if it reaches a bottle
         print("Distance To Bottle: ", distanceToBottle)
         if (distanceToBottle < 50): 
             robot.stop()
-            ev3.speaker.beep()
             color.sayColor(ev3, enemyColorSensor)
             break
 
+        # If the bottle doesn't exist, more than 5 seconds have passed when the robot reaches a black line.
+        if ( (timer.time() - followEnemyLineBeginning > 3000) and (lineColorSensor.color() == Color.BLACK) ):
+            robot.stop()
+            # ev3.speaker.say("No bottle")
+            break
+ 
         wait(1)
 
-def followEnemyLineUntilBlack(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360):
+def followEnemyLineBackUntilTime(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360, timeToFollow):
+
+    # When black            # When white 
+    # Sensor: 2             # Sensor: 7SS
+    # Deviation -23         # Deviation -20 
+    # Turn Rate: -27        # Turn Rate: -25
+
+    threshold = (enemyLineBlue + boardBlue) / 2
+    print("Threshold: ", threshold)
+
+    timer = StopWatch()
+    followEnemyLineBeginning = timer.time()
+
+    while ( (timer.time() - followEnemyLineBeginning ) < timeToFollow ):
+
+        lineColor = lineColorSensor.color()
+        print("Line Color: ", lineColor)
+
+        lineReflection = lineColorSensor.rgb()[2]
+        print("Line Sensor Reflection: ", lineReflection)
+
+        # Calculate the deviation from the threshold.
+        deviation = lineReflection - threshold 
+        print("Deviation: ", deviation)
+
+        # Calculate the turn rate.
+        turnRate = -(proportionalGain * deviation)
+        print("Turn Rate: " + str(turnRate) + "\n")
+
+        # Set the drive base speed and turn rate.
+        robot.drive(-followingMovementSpeed, turnRate)
+
+        wait(1)
+
+def followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360):
 
     # When black            # When white 
     # Sensor: 2             # Sensor: 7SS
@@ -175,16 +214,17 @@ def followEnemyLineUntilBlack(ev3, robot, lineColorSensor, enemyColorSensor, dis
         print("Deviation: ", deviation)
 
         # Calculate the turn rate.
-        turnRate = proportionalGain * deviation
+        turnRate = -(proportionalGain * deviation)
         print("Turn Rate: " + str(turnRate) + "\n")
 
         # Set the drive base speed and turn rate.
-        robot.drive(followingMovementSpeed, turnRate)
+        robot.drive(-followingMovementSpeed, turnRate)
 
         if (lineColor == Color.BLACK):
             robot.stop()
-            ev3.speaker.beep()
-            robot.turn(calibration.calibratedTurn(90, turnCalibrationTo360))
-
+            break
 
         wait(1)
+
+def goBackToBoardBeginning():
+    return

@@ -42,6 +42,9 @@ robot.settings(100, 1000, 100, 1000)
 #calibration.printColor(lineColorSensor)
 #calibration.printColorSensor(lineColorSensor)
 
+notes = ['A4/10', 'A4/10', 'A4/10', 'A4/10', 'A4/10', 'B4/10','D4/10', 'A4/10']
+ev3.speaker.play_notes(notes, tempo=120)
+
 movement.followMainLine(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineReflection, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
 
 #robot.drive(100,1)
