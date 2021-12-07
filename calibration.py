@@ -5,14 +5,24 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-def printColorSensor(lineColorSensor):
+def printLineColorSensor(lineColorSensor):
 
     while True:
-        # print(lineColorSensor.color())
-        print(lineColorSensor.reflection())
-        # print(lineColorSensor.ambient())
-        # print(lineColorSensor.rgb())
-        print()
+        print(lineColorSensor.color())
+        #print(lineColorSensor.reflection())
+        #print(lineColorSensor.ambient())
+        #print(lineColorSensor.rgb())
+        #print()
+        wait(1000)
+
+def printEnemyColorSensor(enemyColorSensor):
+
+    while True:
+        print(enemyColorSensor.color())
+        #print(enemyColorSensor.reflection())
+        #print(enemyColorSensor.ambient())
+        #print(enemyColorSensor.rgb())
+        #print()
         wait(1000)
 
 #! RGB

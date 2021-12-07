@@ -8,10 +8,10 @@ def sayColor(ev3, enemyColorSensor):
     print("Color: ", enemyColorSensor.color())
 
     if enemyColorSensor.color() == Color.BLUE:
-        ev3.speaker.say('blue')
+        ev3.speaker.say('Blue')
     elif enemyColorSensor.color() == Color.GREEN:
-        ev3.speaker.say('green')
+        ev3.speaker.say('Green')
     elif enemyColorSensor.color() == Color.YELLOW:
-        ev3.speaker.say('yellow')
+        ev3.speaker.say('Yellow')
     elif enemyColorSensor.color() == Color.RED:
-        ev3.speaker.say('red')
+        ev3.speaker.say('Red')
