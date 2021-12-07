@@ -5,13 +5,26 @@ from pybricks.tools import wait
 
 def sayColor(ev3, enemyColorSensor):
 
-    print("Color: ", enemyColorSensor.color())
+    # TODO: Exception if the color isn't one of the correct ones.
+    # TODO: The yellow will probably be detected as brown sometimes. Implement correct behaviour.
 
-    if enemyColorSensor.color() == Color.BLUE:
+    enemyColor = enemyColorSensor.color()
+    #print("Color: ", enemyColor)
+
+    if enemyColor == Color.BLUE:
         ev3.speaker.say('Blue')
-    elif enemyColorSensor.color() == Color.GREEN:
+        return Color.BLUE
+
+    elif enemyColor == Color.GREEN:
         ev3.speaker.say('Green')
-    elif enemyColorSensor.color() == Color.YELLOW:
+        return Color.GREEN
+
+    elif enemyColor == Color.YELLOW or enemyColor == Color.BROWN:
         ev3.speaker.say('Yellow')
-    elif enemyColorSensor.color() == Color.RED:
+        return Color.YELLOW
+
+    elif enemyColor == Color.RED:
         ev3.speaker.say('Red')
+        return Color.RED
+
+    
