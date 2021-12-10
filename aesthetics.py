@@ -11,15 +11,16 @@ import movement, calibration, game, attacks, sound, aesthetics
 
 def logo(ev3):
     while True:
-        ev3.screen.load_image("horn64.png")
+        ev3.screen.load_image("horn39.png")
         wait(100)
-        ev3.screen.load_image("horn.png")
+        ev3.screen.load_image("horn55.png")
         wait(100)
 
 def light(ev3):
     while True:
         ev3.light.on(Color.RED)
-        wait(150)
+        wait(100)
         ev3.light.on(Color.GREEN)
-        wait(150)
+        wait(100)
 
+def celebration(ev3, robot): 

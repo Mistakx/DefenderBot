@@ -37,8 +37,8 @@ turnCalibrationTo360 = 1050
 negativeTurnCalibration = 1.1
 
 #! Calibration
-# robot.turn(1050)
-# robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
+#robot.turn(1050)
+#robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
 #calibration.printLineColorSensor(lineColorSensor)
 #calibration.printEnemyColorSensor(enemyColorSensor)
 #calibration.printDistance(distanceSensor)
@@ -51,14 +51,10 @@ light_thread = Thread(target=aesthetics.light, args=(ev3,))
 light_thread.start()
 logo_thread = Thread(target=aesthetics.logo, args=(ev3,))
 logo_thread.start()
+sound_thread = Thread(target=sound.tokio, args=(ev3,))
+sound_thread.start()
 
-wait(100000)
-
-
-
-# t = Thread(target=sound.tokio, args=(ev3,))
-# t.start()
-
-#game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
-#print(enemySlots)
+#! Play game
+game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
+print(enemySlots)
 
