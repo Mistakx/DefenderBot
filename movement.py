@@ -20,26 +20,31 @@ def calibratedTurn(turnAngle, turnCalibrationTo360):
 
 #! Main Line
 
-def followMainLineUntilEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed):
+def followMainLineUntilEnemyLine(log, ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed):
 
     threshold = (mainLineReflection + boardReflection) / 2
-    # print("Threshold: ", threshold) # TODO: Log Parameter 
+    if log:
+        print("Threshold: ", threshold) # TODO: Log Parameter 
 
     while True:
 
         lineColor = lineColorSensor.color()
-        # print("Line Color: ", lineColor) # TODO: Log Parameter
+        if log:
+            print("Line Color: ", lineColor) # TODO: Log Parameter
 
         lineReflection = lineColorSensor.reflection()
-        # print("Line Sensor Reflection: ", lineReflection) # TODO: Log Parameter
+        if log:
+            print("Line Sensor Reflection: ", lineReflection) # TODO: Log Parameter
 
         # Calculate the deviation from the threshold.
         deviation = lineReflection - threshold 
-        # print("Deviation: ", deviation) # TODO: Log Parameter
+        if log:
+            print("Deviation: ", deviation) # TODO: Log Parameter
 
         # Calculate the turn rate.
         turnRate = proportionalGain * deviation
-        # print("Turn Rate: " + str(turnRate) + "\n")# TODO: Log Parameter
+        if log:
+            print("Turn Rate: " + str(turnRate) + "\n")# TODO: Log Parameter
 
         # Set the drive base speed and turn rate.
         robot.drive(followingMovementSpeed, turnRate)
@@ -47,7 +52,7 @@ def followMainLineUntilEnemyLine(ev3, robot, lineColorSensor, mainLineReflection
         #* When the robot reaches the enemy line
         if (lineColorSensor.color() == enemyLineColor):
             robot.stop()
-            break
+            return
 
         #wait(1)
 
@@ -86,8 +91,8 @@ def followMainLineTime(ev3, robot, lineColorSensor, mainLineReflection, boardRef
 
 
 #! Enemy line
-
-def followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed):
+            
+def followEnemyLineUntilBottle(log , enemySlots, enemyLinesPassed, ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed):
 
     # When black            # When white 
     # Sensor: 2             # Sensor: 7SS
@@ -103,18 +108,22 @@ def followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, di
     while True:
 
         lineColor = lineColorSensor.color()
-        # print("Line Color: ", lineColor) # TODO: Log Parameter
+        if log:
+            print("Line Color: ", lineColor) # TODO: Log Parameter
 
         lineReflection = lineColorSensor.rgb()[2]
-        # print("Line Sensor Reflection: ", lineReflection) # TODO: Log Parameter
+        if log:
+            print("Line Sensor Reflection: ", lineReflection) # TODO: Log Parameter
 
         # Calculate the deviation from the threshold.
         deviation = lineReflection - threshold 
-        # print("Deviation: ", deviation) # TODO: Log Parameter
+        if log:
+            print("Deviation: ", deviation) # TODO: Log Parameter
 
         # Calculate the turn rate.
         turnRate = proportionalGain * deviation
-        # print("Turn Rate: " + str(turnRate) + "\n") # TODO: Log Parameter
+        if log:
+            print("Turn Rate: " + str(turnRate) + "\n") # TODO: Log Parameter
 
         # Set the drive base speed and turn rate.
         robot.drive(followingMovementSpeed, turnRate)
@@ -123,9 +132,11 @@ def followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, di
 
         # Stop if it reaches a bottle
         # print("Distance To Bottle: ", distanceToBottle) # TODO: Log Parameter
+
         if (distanceToBottle < 50): 
             robot.stop()
-            ev3.speaker.beep()
+            wait(1000) # Waits for the bottle to reset, in case the robot hit it
+            # ev3.speaker.beep()
             enemyColor = color.sayColor(ev3, enemyColorSensor)
             print("Horn has reached a bottle.")
             print("Bottle color: ", enemyColor)
@@ -137,7 +148,7 @@ def followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, di
             robot.stop()
             ev3.speaker.beep()
             print("Horn has reached the end of the enemy line and found no bottle.\n")
-            ev3.speaker.say("No bottle")
+            #ev3.speaker.say("No bottle")
             return "No bottle"
  
         # wait(1)
@@ -207,7 +218,7 @@ def followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, boardBlue, enemyL
 
         if (lineColor == Color.BLACK):
             robot.stop()
-            break
+            return
 
         #wait(1)
 
@@ -261,5 +272,33 @@ def goBackToFirstEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boar
 
         if enemyLinesPassed == 6:
             robot.stop()
-            break
+            return
 
+def goBackTime(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, proportionalGain, followingMovementSpeed, timeToFollow):
+
+    threshold = (mainLineReflection + boardReflection) / 2
+    # print("Threshold: ", threshold) # TODO: Log Parameter
+
+    timer = StopWatch()
+    timerBeginning = timer.time()
+
+    while (timer.time() - timerBeginning) < timeToFollow: # Start following the line endlessly.
+
+        lineColor = lineColorSensor.color()
+        # print("Line Color: ", lineColor) # TODO: Log Parameter
+
+        lineReflection = lineColorSensor.reflection()
+        # print("Line Sensor Reflection: ", lineReflection) # TODO: Log Parameter
+
+        # Calculate the deviation from the threshold.
+        deviation = lineReflection - threshold 
+        # print("Deviation: ", deviation) # TODO: Log Parameter
+
+        # Calculate the turn rate.
+        turnRate = -(proportionalGain * deviation)
+        # print("Turn Rate: " + str(turnRate) + "\n") # TODO: Log Parameter
+
+        # Set the drive base speed and turn rate.
+        robot.drive(followingMovementSpeed, turnRate)
+
+        #wait(1)

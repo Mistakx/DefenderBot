@@ -5,8 +5,12 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
+from threading import Thread
 
-import movement, calibration, game
+import movement, calibration, game, attacks, sound, aesthetics
+
+#! Game state
+enemySlots = ["","","","","",""]
 
 #! Initialization
 ev3 = EV3Brick()
@@ -19,29 +23,42 @@ distanceSensor = UltrasonicSensor(Port.S4)
 robot = DriveBase(leftMotor, rightMotor, wheel_diameter=55.5, axle_track=104)
 robot.settings(100, 1000, 100, 1000)
 
-
 #! Following line calibration settings
 mainLineReflection = 10 # Parameter used to walk the main line
-boardReflection = 35 # Parameter used to walk the main line
-boardBlue = 64 # Parameter used to walk the enemy line
-enemyLineBlue = 27 # Parameter used to walk the enemy line
+boardReflection = 45 # Parameter used to walk the main line (35)
+boardBlue = 75 # Parameter used to walk the enemy line (65)
+enemyLineBlue = 25 # Parameter used to walk the enemy line (25)
 enemyLineColor= Color.RED
 proportionalGain = 4 # If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
 followingMovementSpeed = 100
 
 #! Movement calibration
-turnCalibrationTo360 = 1000
+turnCalibrationTo360 = 1050
 negativeTurnCalibration = 1.1
 
 #! Calibration
+# robot.turn(1050)
 # robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
-#calibration.printColorSensor(lineColorSensor)
+#calibration.printLineColorSensor(lineColorSensor)
 #calibration.printEnemyColorSensor(enemyColorSensor)
+#calibration.printDistance(distanceSensor)
 
-# movement.followMainLine(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
-#movement.goBackToBoardBeginning(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed)
-game.playGame(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
+#! Aesthetics
+#ev3.speaker.say("For you sir, I'm always ready.")
+#ev3.light.on(Color.RED)
 
-#robot.settings(1000, 1000, 100, 1000)
-#robot.straight(1000)
-#robot.stop()
+light_thread = Thread(target=aesthetics.light, args=(ev3,))
+light_thread.start()
+logo_thread = Thread(target=aesthetics.logo, args=(ev3,))
+logo_thread.start()
+
+wait(100000)
+
+
+
+# t = Thread(target=sound.tokio, args=(ev3,))
+# t.start()
+
+#game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
+#print(enemySlots)
+

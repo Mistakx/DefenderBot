@@ -5,38 +5,42 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-import movement, calibration
+import movement, calibration, attack
 
-def playGame(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360):
+def recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360):
 
     enemyLinesPassed = 0
 
     #* Horn plays the game until reaching the final line
     while enemyLinesPassed < 6:
 
-        movement.followMainLineUntilEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed*4)
-        enemyLinesPassed += 1
+        movement.followMainLineUntilEnemyLine(False, ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed*2)
         ev3.speaker.beep()
         
-        print("Following main line. Enemy lines passed: ", enemyLinesPassed)
+        print("Following main line. Enemy lines reached: ", enemyLinesPassed)
 
         #* Horn sets itself up, and rotates to the enemy line
         movement.followMainLineTime(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, proportionalGain, followingMovementSpeed, 2000)
         ev3.speaker.beep()
-        robot.turn(movement.calibratedTurn(-130 * negativeTurnCalibration, turnCalibrationTo360)) # TODO
+        robot.turn(movement.calibratedTurn(-130 * negativeTurnCalibration, turnCalibrationTo360))
         ev3.speaker.beep()
         
         #* Robot follows the enemy line until the bottle
-        movement.followEnemyLineUntilBottle(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed*4)
+        enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, enemySlots, enemyLinesPassed, ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed*1)
        
         #* Robot goes backwards until the black tape and rotates back to the main line
         ev3.speaker.beep()
         movement.followEnemyLineBackUntilTime(ev3, robot, lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, 1000)
         ev3.speaker.beep()
-        movement.followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed*4)
+        if enemySlots[enemyLinesPassed] != "No bottle":
+            attack.craneAttack(False, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, 170)
+        ev3.speaker.beep()
+        movement.followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed*1)
         ev3.speaker.beep()
         robot.turn(movement.calibratedTurn(90 * negativeTurnCalibration, turnCalibrationTo360))
         ev3.speaker.beep()
+        enemyLinesPassed += 1
+
 
     # After reaching final enemy line, Horn rotates and goes back to the beginning
     print("End of the board reached, going back to the beginning.")
@@ -44,9 +48,9 @@ def playGame(ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, main
     ev3.speaker.beep()
     robot.turn(movement.calibratedTurn(-190, turnCalibrationTo360))
     ev3.speaker.beep()
-    movement.goBackToFirstEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed*4)
+    movement.goBackToFirstEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed*2)
     ev3.speaker.beep()
-    movement.followMainLineTime(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, proportionalGain, followingMovementSpeed, 3000)
+    movement.goBackTime(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, proportionalGain, followingMovementSpeed, 4000)
     ev3.speaker.beep()
     robot.turn(movement.calibratedTurn(180, turnCalibrationTo360))
 

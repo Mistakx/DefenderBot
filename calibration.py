@@ -11,7 +11,7 @@ def printLineColorSensor(lineColorSensor):
         print(lineColorSensor.color())
         #print(lineColorSensor.reflection())
         #print(lineColorSensor.ambient())
-        #print(lineColorSensor.rgb())
+        print(lineColorSensor.rgb())
         #print()
         wait(1000)
 
@@ -23,6 +23,11 @@ def printEnemyColorSensor(enemyColorSensor):
         #print(enemyColorSensor.ambient())
         #print(enemyColorSensor.rgb())
         #print()
+        wait(1000)
+
+def printDistance(distanceSensor):
+    while True:
+        print(distanceSensor.distance())
         wait(1000)
 
 #! RGB

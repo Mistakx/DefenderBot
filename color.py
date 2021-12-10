@@ -9,22 +9,22 @@ def sayColor(ev3, enemyColorSensor):
     # TODO: The yellow will probably be detected as brown sometimes. Implement correct behaviour.
 
     enemyColor = enemyColorSensor.color()
-    #print("Color: ", enemyColor)
+    print("Color reached: ", enemyColor)
 
     if enemyColor == Color.BLUE:
-        ev3.speaker.say('Blue')
+        #ev3.speaker.say('Blue')
         return Color.BLUE
 
     elif enemyColor == Color.GREEN:
-        ev3.speaker.say('Green')
+        #ev3.speaker.say('Green')
         return Color.GREEN
 
     elif enemyColor == Color.YELLOW or enemyColor == Color.BROWN:
-        ev3.speaker.say('Yellow')
+        #ev3.speaker.say('Yellow')
         return Color.YELLOW
 
     elif enemyColor == Color.RED:
-        ev3.speaker.say('Red')
+        #ev3.speaker.say('Red')
         return Color.RED
 
     

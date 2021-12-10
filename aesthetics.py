@@ -5,15 +5,21 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
+from threading import Thread
 
-import movement, calibration, game, attacks
+import movement, calibration, game, attacks, sound, aesthetics
 
-def speak(ev3):
-    ev3.speaker.set_volume(100, which='_all_')
-    ev3.speaker.set_speech_options(language="pt", voice=None, speed=20, pitch=None)
-    ev3.speaker.say("TRAVA NA POSE OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!")
+def logo(ev3):
+    while True:
+        ev3.screen.load_image("horn64.png")
+        wait(100)
+        ev3.screen.load_image("horn.png")
+        wait(100)
 
-def tokio(ev3):
-    ev3.speaker.play_file("Tokio24.rsf")
-
+def light(ev3):
+    while True:
+        ev3.light.on(Color.RED)
+        wait(150)
+        ev3.light.on(Color.GREEN)
+        wait(150)
 
