@@ -51,9 +51,9 @@ negativeTurnCalibration = 1.1
 # light_thread.start()
 # logo_thread = Thread(target=aesthetics.logo, args=(ev3,))
 # logo_thread.start()
-#sound_thread = Thread(target=sound.tokio, args=(ev3,))
-#sound_thread.start()
-#wait(100000)
+# sound_thread = Thread(target=sound.tokio, args=(ev3,))
+# sound_thread.start()
+# wait(100000000)
 
 #! Play game
 while True:
