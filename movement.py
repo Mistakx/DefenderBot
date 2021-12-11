@@ -137,16 +137,6 @@ def followEnemyLineUntilBottle(log , enemySlots, enemyLinesPassed, ev3, robot, l
             enemyColor = color.sayColor(ev3, enemyColorSensor)
             print("Horn has reached a bottle.")
             print("Bottle color: ", enemyColor)
-            if "Error": # If the bottle is invalid, go back and try again
-                print("Invalid bottle. Going back to try again")
-                followEnemyLineBackUntilTime(ev3, robot, lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, 1000):
-                robot.stop()
-                ev3.speaker.beep()
-                wait(1000) # Waits for the bottle to reset, in case the robot hit it
-                enemyColor = color.sayColor(ev3, enemyColorSensor)
-                print("Horn has reached a bottle on the second attemp.")
-                print("Bottle color: ", enemyColor)
-
             print()
             return enemyColor
 

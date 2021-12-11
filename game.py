@@ -28,6 +28,13 @@ def recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyCol
         
         #* Robot follows the enemy line until the bottle
         enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, enemySlots, enemyLinesPassed, ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed*1)
+        if enemySlots[enemyLinesPassed] == "Error": 
+            ev3.speaker.beep()
+            print("Robot read invalid color, going back to try again.")
+            robot.straight(-200)
+            ev3.speaker.beep()
+            enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, enemySlots, enemyLinesPassed, ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed*1)
+
         ev3.speaker.beep()
        
         #* Enemy attacks if it reached the bottle, or goes backwards if it reached the final black line
