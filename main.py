@@ -47,14 +47,16 @@ negativeTurnCalibration = 1.1
 #ev3.speaker.say("For you sir, I'm always ready.")
 #ev3.light.on(Color.RED)
 
-light_thread = Thread(target=aesthetics.light, args=(ev3,))
-light_thread.start()
-logo_thread = Thread(target=aesthetics.logo, args=(ev3,))
-logo_thread.start()
-sound_thread = Thread(target=sound.tokio, args=(ev3,))
-sound_thread.start()
+# light_thread = Thread(target=aesthetics.light, args=(ev3,))
+# light_thread.start()
+# logo_thread = Thread(target=aesthetics.logo, args=(ev3,))
+# logo_thread.start()
+#sound_thread = Thread(target=sound.tokio, args=(ev3,))
+#sound_thread.start()
+#wait(100000)
 
 #! Play game
-game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
-print(enemySlots)
+while True:
+    game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
+    print(enemySlots)
 

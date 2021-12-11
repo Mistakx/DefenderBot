@@ -14,8 +14,13 @@ def speak(ev3):
     ev3.speaker.say("TRAVA NA POSE OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!")
 
 def tokio(ev3):
-    ev3.speaker.play_file("tokio1.rsf")
-    ev3.speaker.play_file("tokio2.rsf")
-    ev3.speaker.play_file("tokio3.rsf")
+    # ev3.speaker.play_file("tokio1.rsf")
+    # ev3.speaker.play_file("tokio2.rsf")
+    # ev3.speaker.play_file("tokio3.rsf")
+    # ev3.speaker.play_file("tokioOriginal.rsf")
+    # ev3.speaker.play_file("tokioBoost15.rsf")
+    ev3.speaker.play_file("original.rsf")
+    # ev3.speaker.play_file("tokioBoostMax.rsf")
+
 
 

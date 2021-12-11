@@ -27,4 +27,7 @@ def sayColor(ev3, enemyColorSensor):
         #ev3.speaker.say('Red')
         return Color.RED
 
+    else:
+        return "Error"
+
     

@@ -23,4 +23,5 @@ def light(ev3):
         ev3.light.on(Color.GREEN)
         wait(100)
 
-def celebration(ev3, robot): 
+def celebration(ev3, robot):
+    return

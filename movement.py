@@ -94,13 +94,9 @@ def followMainLineTime(ev3, robot, lineColorSensor, mainLineReflection, boardRef
             
 def followEnemyLineUntilBottle(log , enemySlots, enemyLinesPassed, ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed):
 
-    # When black            # When white 
-    # Sensor: 2             # Sensor: 7SS
-    # Deviation -23         # Deviation -20 
-    # Turn Rate: -27        # Turn Rate: -25
-
     threshold = (enemyLineBlue + boardBlue) / 2
-    # print("Threshold: ", threshold) # TODO: Log Parameter
+    if log:
+        print("Threshold: ", threshold) # TODO: Log Parameter
 
     timer = StopWatch()
     followEnemyLineBeginning = timer.time()
@@ -131,22 +127,26 @@ def followEnemyLineUntilBottle(log , enemySlots, enemyLinesPassed, ev3, robot, l
         distanceToBottle = distanceSensor.distance()
 
         # Stop if it reaches a bottle
-        # print("Distance To Bottle: ", distanceToBottle) # TODO: Log Parameter
+        if log:
+            print("Distance To Bottle: ", distanceToBottle) # TODO: Log Parameter
 
         if (distanceToBottle < 50): 
             robot.stop()
+            ev3.speaker.beep()
             wait(1000) # Waits for the bottle to reset, in case the robot hit it
-            # ev3.speaker.beep()
             enemyColor = color.sayColor(ev3, enemyColorSensor)
             print("Horn has reached a bottle.")
             print("Bottle color: ", enemyColor)
             print()
             return enemyColor
 
-        # If the bottle doesn't exist, more than 3 seconds have passed when the robot reaches a black line.
+        # If the bottle doesn't exist, more than 3 seconds have passed when the robot reaches a black line
+        # The robot has to have passed the first line, but not the second.
+        # We could detect if the robot passes two black lines.
+        # But sometimes the angle it rotates when going from the black to the red line makes it so it misses the first black line.
+        # The best aproach is to wait some seconds for it to pass the first black line, and detect the black line after that, which is going to be end line.
         if ( (timer.time() - followEnemyLineBeginning > 3000) and (lineColorSensor.color() == Color.BLACK) ):
             robot.stop()
-            ev3.speaker.beep()
             print("Horn has reached the end of the enemy line and found no bottle.\n")
             #ev3.speaker.say("No bottle")
             return "No bottle"
@@ -260,7 +260,7 @@ def goBackToFirstEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boar
                 timerLastEnemyLinePassed = timer.time()
                 enemyLinesPassed += 1
                 ev3.speaker.beep()
-                print("Going back, lines passed: ", enemyLinesPassed)
+                print("Going back, number of lines passed: ", enemyLinesPassed)
 
             # After that, the instant the robot passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
             else:
