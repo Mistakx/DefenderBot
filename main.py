@@ -23,20 +23,9 @@ distanceSensor = UltrasonicSensor(Port.S4)
 robot = DriveBase(leftMotor, rightMotor, wheel_diameter=55.5, axle_track=104)
 robot.settings(100, 1000, 100, 1000)
 
-#! Following line calibration settings
-mainLineReflection = 10 # Parameter used to walk the main line
-boardReflection = 35 # Parameter used to walk the main line (35)
-boardBlue = 50 # Parameter used to walk the enemy line (65)
-enemyLineBlue = 20 # Parameter used to walk the enemy line (25)
-enemyLineColor= Color.RED
-proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
-followingMovementSpeed = 100
-
-#! Movement calibration
-turnCalibrationTo360 = 1050
-negativeTurnCalibration = 1.1
-
 #! Calibration
+followingMovementSpeed = 100
+negativeTurnCalibration = 1.1
 #robot.turn(1050)
 #robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
 #calibration.printLineColorSensor(lineColorSensor)
@@ -57,6 +46,6 @@ negativeTurnCalibration = 1.1
 
 #! Play game
 while True:
-    game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, mainLineReflection, boardReflection, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, negativeTurnCalibration, turnCalibrationTo360)
+    game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, followingMovementSpeed, negativeTurnCalibration)
     print(enemySlots)
 

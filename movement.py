@@ -7,8 +7,19 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 
 import color
 
+#! Following line calibration settings
+mainLineReflection = 10 # Parameter used to walk the main line
+boardReflection = 35 # Parameter used to walk the main line (35)
+boardBlue = 50 # Parameter used to walk the enemy line (65)
+enemyLineBlue = 20 # Parameter used to walk the enemy line (25)
+enemyLineColor= Color.RED
+proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+
+#! Movement calibration
+turnCalibrationTo360 = 1050
+
 #* Positive turn - Left | Negative turn - Right
-def calibratedTurn(turnAngle, turnCalibrationTo360): 
+def calibratedTurn(turnAngle): 
 
     # 360 - 900
     # 500 - x
@@ -20,7 +31,7 @@ def calibratedTurn(turnAngle, turnCalibrationTo360):
 
 #! Main Line
 
-def followMainLineUntilEnemyLine(log, ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed):
+def followMainLineUntilEnemyLine(log, ev3, robot, lineColorSensor, followingMovementSpeed):
 
     threshold = (mainLineReflection + boardReflection) / 2
     if log:
@@ -56,7 +67,7 @@ def followMainLineUntilEnemyLine(log, ev3, robot, lineColorSensor, mainLineRefle
 
         #wait(1)
 
-def followMainLineTime(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, proportionalGain, followingMovementSpeed, timeToFollow):
+def followMainLineTime(ev3, robot, lineColorSensor, followingMovementSpeed, timeToFollow):
 
     # When black            # When white 
     # Sensor: 2             # Sensor: 7SS
@@ -92,7 +103,7 @@ def followMainLineTime(ev3, robot, lineColorSensor, mainLineReflection, boardRef
 
 #! Enemy line
             
-def followEnemyLineUntilBottle(log , enemySlots, enemyLinesPassed, ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed):
+def followEnemyLineUntilBottle(log , enemySlots, enemyLinesPassed, ev3, robot, lineColorSensor, enemyColorSensor, distanceSensor, followingMovementSpeed):
 
     threshold = (enemyLineBlue + boardBlue) / 2
     if log:
@@ -153,7 +164,7 @@ def followEnemyLineUntilBottle(log , enemySlots, enemyLinesPassed, ev3, robot, l
  
         # wait(1)
 
-def followEnemyLineBackUntilTime(ev3, robot, lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, timeToFollow):
+def followEnemyLineBackUntilTime(ev3, robot, lineColorSensor, followingMovementSpeed, timeToFollow):
 
     # When black            # When white 
     # Sensor: 2             # Sensor: 7SS
@@ -187,7 +198,7 @@ def followEnemyLineBackUntilTime(ev3, robot, lineColorSensor, boardBlue, enemyLi
 
         #wait(1)
 
-def followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed):
+def followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, followingMovementSpeed):
 
     # When black            # When white 
     # Sensor: 2             # Sensor: 7SS
@@ -224,7 +235,7 @@ def followEnemyLineBackUntilBlack(ev3, robot, lineColorSensor, boardBlue, enemyL
 
 
 #! Back to beginning
-def goBackToFirstEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, enemyLineColor, proportionalGain, followingMovementSpeed):
+def goBackToFirstEnemyLine(ev3, robot, lineColorSensor, followingMovementSpeed):
 
     enemyLinesPassed = 0
     timer = StopWatch()
@@ -274,7 +285,7 @@ def goBackToFirstEnemyLine(ev3, robot, lineColorSensor, mainLineReflection, boar
             robot.stop()
             return
 
-def goBackTime(ev3, robot, lineColorSensor, mainLineReflection, boardReflection, proportionalGain, followingMovementSpeed, timeToFollow):
+def goBackTime(ev3, robot, lineColorSensor, followingMovementSpeed, timeToFollow):
 
     threshold = (mainLineReflection + boardReflection) / 2
     # print("Threshold: ", threshold) # TODO: Log Parameter
