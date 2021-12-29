@@ -8,7 +8,7 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 def printLineColorSensor(lineColorSensor):
 
     while True:
-        print(lineColorSensor.color())
+        #print(lineColorSensor.color())
         #print(lineColorSensor.reflection())
         #print(lineColorSensor.ambient())
         print(lineColorSensor.rgb())

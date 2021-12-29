@@ -25,11 +25,11 @@ robot.settings(100, 1000, 100, 1000)
 
 #! Following line calibration settings
 mainLineReflection = 10 # Parameter used to walk the main line
-boardReflection = 45 # Parameter used to walk the main line (35)
-boardBlue = 75 # Parameter used to walk the enemy line (65)
-enemyLineBlue = 25 # Parameter used to walk the enemy line (25)
+boardReflection = 35 # Parameter used to walk the main line (35)
+boardBlue = 50 # Parameter used to walk the enemy line (65)
+enemyLineBlue = 20 # Parameter used to walk the enemy line (25)
 enemyLineColor= Color.RED
-proportionalGain = 4 # If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
 followingMovementSpeed = 100
 
 #! Movement calibration

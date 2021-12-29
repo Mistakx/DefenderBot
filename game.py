@@ -41,13 +41,15 @@ def recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyCol
         if enemySlots[enemyLinesPassed] != "No bottle": # Enemy reached a bottle
             attackNumber = random.randint(1, 2)
             if attackNumber == 1:
-                attack.craneAttack(False, ev3, robot, craneMotor, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, 170)
+                print("Crane Attack\n")
+                attack.craneAttack(True, ev3, robot, craneMotor, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, 150)
             elif attackNumber == 2:
-                attack.headbutt(False, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, 200)
+                print("Headbutt Attack\n")
+                attack.headbutt(True, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed)
                 ev3.speaker.beep()
                 robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-            # elif attackNumber == 3:
-            #     attack.soundAttack(ev3)
+            elif attackNumber == 3:
+                attack.soundAttack(ev3)
         else: # Enemy didn't reach a bottle
             #movement.followEnemyLineBackUntilTime(ev3, robot, lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, 2000)
             robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways

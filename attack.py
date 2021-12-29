@@ -56,11 +56,11 @@ def craneAttack(log, ev3, robot, craneMotor, lineColorSensor, distanceSensor, bo
                 distanceToBottle = distanceSensor.distance()
                 if log:
                     print("Looking if hit bottle: ", distanceToBottle)
-                if distanceToBottle > 300:
+                if distanceToBottle > 400:
                     craneMotor.stop()
                     return
 
-def headbutt(log, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, distanceToStop)   :
+def headbutt(log, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed)   :
 
     threshold = (enemyLineBlue + boardBlue) / 2
     if log:
@@ -94,12 +94,11 @@ def headbutt(log, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyL
 
         distanceToBottle = distanceSensor.distance()
 
-        # Stop if headbutts reaches a bottle
-        if log:
-            print("Distance To Bottle: ", distanceToBottle) 
-
-        if (distanceToBottle > distanceToStop): 
-            
+        if (distanceToBottle > 400): # Stop if headbutts reaches a bottle 
+                    
+            if log:
+                print("Distance To Bottle: ", distanceToBottle) 
+                
             robot.stop()
             return
 
