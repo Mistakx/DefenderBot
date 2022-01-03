@@ -9,23 +9,34 @@ from threading import Thread
 
 import movement, calibration, game, attacks, sound, aesthetics
 
-#! Game state
-enemySlots = ["","","","","",""]
-
 #! Initialization
-ev3 = EV3Brick()
-leftMotor = Motor(Port.A)
-rightMotor = Motor(Port.B)
-craneMotor = Motor(Port.D)
-lineColorSensor = ColorSensor(Port.S1)
-enemyColorSensor = ColorSensor(Port.S3)
-distanceSensor = UltrasonicSensor(Port.S4)
-robot = DriveBase(leftMotor, rightMotor, wheel_diameter=55.5, axle_track=104)
-robot.settings(100, 1000, 100, 1000)
+class Horn:
+    ev3 = EV3Brick()
+    leftMotor = Motor(Port.A)
+    rightMotor = Motor(Port.B)
+    craneMotor = Motor(Port.D)
+    lineColorSensor = ColorSensor(Port.S1)
+    enemyColorSensor = ColorSensor(Port.S3)
+    distanceSensor = UltrasonicSensor(Port.S4)
+    robot = DriveBase(leftMotor, rightMotor, wheel_diameter=55.5, axle_track=104)
+
+class Calibration:
+    mainLineReflection = 10 # Parameter used to walk the main line
+    boardReflection = 35 # Parameter used to walk the main line (35)
+    boardBlue = 50 # Parameter used to walk the enemy line (65)
+    enemyLineBlue = 20 # Parameter used to walk the enemy line (25)
+    enemyLineColor= Color.RED
+    proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+    turnCalibrationTo360 = 1050
+    negativeTurnCalibration = 1.1
+    followingMovementSpeed = 100
+
+calibration = Calibration()
+horn = Horn()
+horn.robot.settings(100, 1000, 100, 1000)
+
 
 #! Calibration
-followingMovementSpeed = 100
-negativeTurnCalibration = 1.1
 #robot.turn(1050)
 #robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
 #calibration.printLineColorSensor(lineColorSensor)
@@ -46,6 +57,4 @@ negativeTurnCalibration = 1.1
 
 #! Play game
 while True:
-    game.recognizeBoard(enemySlots, ev3, robot, craneMotor, lineColorSensor, enemyColorSensor, distanceSensor, followingMovementSpeed, negativeTurnCalibration)
-    print(enemySlots)
-
+    game.recognizeBoard(horn, calibration)

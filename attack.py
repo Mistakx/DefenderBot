@@ -7,9 +7,10 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from threading import Thread
 
-def craneAttack(log, ev3, robot, craneMotor, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed, distanceToStop):
+# Horn goes backwards until it is in a position to attack with the crane, then keeps attacking until the enemy falls.
+def craneAttack(log, horn, calibration, followingMovementSpeed, distanceToStop):
 
-    threshold = (enemyLineBlue + boardBlue) / 2
+    threshold = (calibration.enemyLineBlue + calibration.boardBlue) / 2
     if log:
         print("Threshold: ", threshold)
 
@@ -18,11 +19,11 @@ def craneAttack(log, ev3, robot, craneMotor, lineColorSensor, distanceSensor, bo
 
     while True:
 
-        lineColor = lineColorSensor.color()
+        lineColor = horn.lineColorSensor.color()
         if log:
             print("Line Color: ", lineColor) 
 
-        lineReflection = lineColorSensor.rgb()[2]
+        lineReflection = horn.lineColorSensor.rgb()[2]
         if log:
             print("Line Sensor Reflection: ", lineReflection) 
 
@@ -32,14 +33,14 @@ def craneAttack(log, ev3, robot, craneMotor, lineColorSensor, distanceSensor, bo
             print("Deviation: ", deviation)
 
         # Calculate the turn rate.
-        turnRate = proportionalGain * deviation
+        turnRate = calibration.proportionalGain * deviation
         if log:
             print("Turn Rate: " + str(turnRate) + "\n") 
 
         # Set the drive base speed and turn rate.
-        robot.drive(-followingMovementSpeed, turnRate)
+        horn.robot.drive(-followingMovementSpeed, turnRate)
 
-        distanceToBottle = distanceSensor.distance()
+        distanceToBottle = horn.distanceSensor.distance()
 
         # Stop if it reaches a bottle
         if log:
@@ -47,22 +48,22 @@ def craneAttack(log, ev3, robot, craneMotor, lineColorSensor, distanceSensor, bo
 
         if (distanceToBottle > distanceToStop): 
             
-            robot.stop()
+            horn.robot.stop()
 
             # Keep spinning until bottle gets hit
-            craneMotor.run(-200)
+            horn.craneMotor.run(-200)
             while True:
 
-                distanceToBottle = distanceSensor.distance()
+                distanceToBottle = horn.distanceSensor.distance()
                 if log:
                     print("Looking if hit bottle: ", distanceToBottle)
                 if distanceToBottle > 400:
-                    craneMotor.stop()
+                    horn.craneMotor.stop()
                     return
 
-def headbutt(log, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, followingMovementSpeed)   :
+def headbutt(log, horn, calibration, followingMovementSpeed)   :
 
-    threshold = (enemyLineBlue + boardBlue) / 2
+    threshold = (calibration.enemyLineBlue + calibration.boardBlue) / 2
     if log:
         print("Threshold: ", threshold)
 
@@ -71,11 +72,11 @@ def headbutt(log, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyL
 
     while True:
 
-        lineColor = lineColorSensor.color()
+        lineColor = horn.lineColorSensor.color()
         if log:
             print("Line Color: ", lineColor) 
 
-        lineReflection = lineColorSensor.rgb()[2]
+        lineReflection = horn.lineColorSensor.rgb()[2]
         if log:
             print("Line Sensor Reflection: ", lineReflection) 
 
@@ -85,25 +86,25 @@ def headbutt(log, ev3, robot, lineColorSensor, distanceSensor, boardBlue, enemyL
             print("Deviation: ", deviation)
 
         # Calculate the turn rate.
-        turnRate = proportionalGain * deviation
+        turnRate = calibration.proportionalGain * deviation
         if log:
             print("Turn Rate: " + str(turnRate) + "\n") 
 
         # Set the drive base speed and turn rate.
-        robot.drive(followingMovementSpeed, turnRate)
+        horn.robot.drive(followingMovementSpeed, turnRate)
 
-        distanceToBottle = distanceSensor.distance()
+        distanceToBottle = horn.distanceSensor.distance()
 
         if (distanceToBottle > 400): # Stop if headbutts reaches a bottle 
                     
             if log:
                 print("Distance To Bottle: ", distanceToBottle) 
                 
-            robot.stop()
+            horn.robot.stop()
             return
 
-def soundAttack(ev3):
-    ev3.speaker.play_file(SoundFile.BACKING_ALERT)
+def soundAttack(horn):
+    horn.ev3.speaker.play_file(SoundFile.BACKING_ALERT)
 
             
 

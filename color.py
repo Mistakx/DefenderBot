@@ -3,29 +3,52 @@ from pybricks.ev3devices import Motor, TouchSensor, ColorSensor
 from pybricks.parameters import Port, Button, Color, ImageFile, SoundFile
 from pybricks.tools import wait
 
-def sayColor(ev3, enemyColorSensor):
+def identifyEnemy(ev3, enemyColorSensor):
 
     # TODO: Exception if the color isn't one of the correct ones.
-    # TODO: The yellow will probably be detected as brown sometimes. Implement correct behaviour.
 
     enemyColor = enemyColorSensor.color()
     print("Color reached: ", enemyColor)
 
     if enemyColor == Color.BLUE:
         #ev3.speaker.say('Blue')
+        # infantry = {
+        #     "type": "Infantry",
+        #     "strenght": 100,
+        #     "n_attacks": 3,
+        #     "health": 100
+        # }
         return Color.BLUE
 
-    elif enemyColor == Color.GREEN:
+    elif enemyColor == Color.GREEN: # Infantry
         #ev3.speaker.say('Green')
-        return Color.GREEN
+        infantry = {
+            "type": "Infantry",
+            "strenght": 100,
+            "n_attacks": 3,
+            "health": 100
+        }
+        return infantry
 
-    elif enemyColor == Color.YELLOW or enemyColor == Color.BROWN:
+    elif enemyColor == Color.YELLOW or enemyColor == Color.BROWN: # Artillery
         #ev3.speaker.say('Yellow')
-        return Color.YELLOW
+        artillery = {
+            "type": "Artillery",
+            "strenght": 500,
+            "n_attacks": 1,
+            "health": 50
+        }
+        return artillery
 
-    elif enemyColor == Color.RED:
+    elif enemyColor == Color.RED: # Tank
         #ev3.speaker.say('Red')
-        return Color.RED
+        tank = {
+            "type": "Tank",
+            "strenght": 200,
+            "n_attacks": 2,
+            "health": 200
+        }
+        return tank
 
     else:
         return "Error"
