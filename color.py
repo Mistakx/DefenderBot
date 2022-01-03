@@ -18,7 +18,7 @@ def identifyEnemy(ev3, enemyColorSensor):
         #     "n_attacks": 3,
         #     "health": 100
         # }
-        return Color.BLUE
+        return "Error"
 
     elif enemyColor == Color.GREEN: # Infantry
         #ev3.speaker.say('Green')
@@ -49,6 +49,10 @@ def identifyEnemy(ev3, enemyColorSensor):
             "health": 200
         }
         return tank
+
+    elif enemyColor == Color.BLACK:
+    #ev3.speaker.say('Black')
+        return "Error"
 
     else:
         return "Error"

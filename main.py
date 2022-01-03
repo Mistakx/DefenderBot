@@ -56,5 +56,11 @@ horn.robot.settings(100, 1000, 100, 1000)
 # wait(100000000)
 
 #! Play game
+
+movement.followMainLineUntilEnemyLine(False, horn, calibration, calibration.followingMovementSpeed, -1, 2)
+
+
 while True:
-    game.recognizeBoard(horn, calibration)
+    break
+    # game.recognizeBoard(horn, calibration)
+

@@ -22,7 +22,11 @@ def calibratedTurn(turnAngle, calibration):
 
 #! Main Line
 
-def followMainLineUntilEnemyLine(log, horn, calibration, followingMovementSpeed):
+def followMainLineUntilEnemyLine(log, horn, calibration, followingMovementSpeed, currentLine, lineToGoTo):
+
+    firstLine = True
+    timer = StopWatch()
+    timerLastEnemyLinePassed = "" 
 
     threshold = (calibration.mainLineReflection + calibration.boardReflection) / 2
     if log:
@@ -53,10 +57,25 @@ def followMainLineUntilEnemyLine(log, horn, calibration, followingMovementSpeed)
 
         #* When the horn.robot reaches the enemy line
         if (horn.lineColorSensor.color() == calibration.enemyLineColor):
+
+            # The first instant the horn.robot passes the enemy line always counts
+            if firstLine == True:
+                timerLastEnemyLinePassed = timer.time()
+                currentLine += 1
+                horn.ev3.speaker.beep()
+                print("Following main line, number of lines passed: ", currentLine)
+
+            # After that, the instant the horn.robot passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
+            else:
+                if (timer.time() - timerLastEnemyLinePassed > 2000):
+                    timerLastEnemyLinePassed = timer.time()
+                    currentLine += 1
+                    horn.ev3.speaker.beep()
+                    print("Going back, lines passed: ", currentLine)
+
+        if currentLine == lineToGoTo:
             horn.robot.stop()
             return
-
-        #wait(1)
 
 def followMainLineUntilNextEnemyLine(log, horn, calibration, followingMovementSpeed):
 
@@ -174,9 +193,14 @@ def followEnemyLineUntilBottle(log, horn, calibration, followingMovementSpeed):
             wait(1000) # Waits for the bottle to reset, in case the horn.robot hit it
             enemy = color.identifyEnemy(horn.ev3, horn.enemyColorSensor)
             print("Horn has reached a bottle.")
-            print("Enemy type: ", enemy["type"])
-            print()
-            return enemy
+            try:
+                print("Enemy type: ", enemy["type"])
+                print()
+                return enemy
+            except: 
+                print("Enemy invalid")
+                print()
+                return enemy
 
         # If the bottle doesn't exist, more than 3 seconds have passed when the horn.robot reaches a black line
         # The horn.robot has to have passed the first line, but not the second.
@@ -263,6 +287,7 @@ def followEnemyLineBackUntilBlack(horn, calibration, followingMovementSpeed):
 
 #! Back to beginning
 
+# TODO: Change to depend on current line
 def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed):
 
     enemyLinesPassed = 0
