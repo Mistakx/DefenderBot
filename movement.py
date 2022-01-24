@@ -288,7 +288,7 @@ def followEnemyLineBackUntilBlack(horn, calibration, followingMovementSpeed):
 #! Back to beginning
 
 # TODO: Change to depend on current line
-def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed):
+def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed, gameInfo):
 
     enemyLinesPassed = 0
     timer = StopWatch()
@@ -334,7 +334,8 @@ def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed):
                     horn.ev3.speaker.beep()
                     print("Going back, lines passed: ", enemyLinesPassed)
 
-        if enemyLinesPassed == 6:
+        if enemyLinesPassed == gameInfo.currentPosition:
+            gameInfo.currentPosition = 0 
             horn.robot.stop()
             return
 

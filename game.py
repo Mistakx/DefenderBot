@@ -44,66 +44,70 @@ currentSlot = 0
 # Worst case scenario: 6 tanks - 
 
 # TODO
-def recognizeBoard(horn, calibration):
-
-    enemyLinesPassed = 0
+def recognizeBoard(horn, calibration, gameInfo):
 
     #* Horn plays the game until reaching the final line
-    while enemyLinesPassed < 6:
+    i = 0
+    while i < 6:
 
-        movement.followMainLineUntilNextEnemyLine(False, horn, calibration, calibration.followingMovementSpeed*2)
-        horn.ev3.speaker.beep()
-        
-        print("Following main line. Enemy line reached: ", enemyLinesPassed)
-
-        #* Horn sets itself up, and rotates to the enemy line
-        movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2000)
-        horn.ev3.speaker.beep()
-        horn.robot.turn(movement.calibratedTurn(-130 * calibration.negativeTurnCalibration, calibration))
-        horn.ev3.speaker.beep()
-        
-        #* horn.Robot follows the enemy line until the bottle
-        enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
-        if enemySlots[enemyLinesPassed] == "Error": 
+        if ( (gameInfo.enemySlots[i] == "") and (gameInfo.enemySlots[i] != "Dead") ): # Only recognize valid slots
+           
+            print("Slot "+ str(i+1) + " needs to be recognized.\n")
+           
+            movement.followMainLineUntilEnemyLine(False, horn, calibration, calibration.followingMovementSpeed*2, gameInfo.currentPosition, i+1)
             horn.ev3.speaker.beep()
-            print("Horn read invalid color, going back to try again.")
-            horn.ev3.speaker.say("INVALID COLOR, REPOSITION BOTTLE")
-            horn.robot.straight(-200)
-            horn.ev3.speaker.beep()
-            enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
-            if enemySlots[enemyLinesPassed] == "Error": # After reading bottle again, if it is still invalid, treat it as artillery
-                enemySlots[enemyLinesPassed] = {
-                "type": "Artillery",
-                "strenght": 500,
-                "n_attacks": 1,
-                "health": 50
-                }
-        horn.ev3.speaker.beep()
-       
-        #* Enemy attacks if it reached the bottle, or goes backwards if it reached the final black line
-        if enemySlots[enemyLinesPassed] != "No bottle": # Enemy reached a bottle
-            attackNumber = random.randint(1, 2)
-            if attackNumber == 1:
-                print("Crane Attack\n")
-                attack.craneAttack(False, horn, calibration, calibration.followingMovementSpeed, 150)
-            elif attackNumber == 2:
-                print("Headbutt Attack\n")
-                attack.headbutt(False, horn, calibration, calibration.followingMovementSpeed)
-                horn.ev3.speaker.beep()
-                horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-            elif attackNumber == 3:
-                attack.soundAttack(horn.ev3)
-        else: # Enemy didn't reach a bottle
-            #movement.followEnemyLineBackUntilTime(horn.ev3, horn.robot, horn.lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, calibration.followingMovementSpeed, 2000)
-            horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-        horn.ev3.speaker.beep()
             
-        #* horn.Robot goes backwards until the black tape and rotates back to the main line 
-        movement.followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
-        horn.ev3.speaker.beep()
-        horn.robot.turn(movement.calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
-        horn.ev3.speaker.beep()
-        enemyLinesPassed += 1
+            #* Horn sets itself up, and rotates to the enemy line
+            movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2000)
+            horn.ev3.speaker.beep()
+            horn.robot.turn(movement.calibratedTurn(-130 * calibration.negativeTurnCalibration, calibration))
+            horn.ev3.speaker.beep()
+            
+            #* horn.Robot follows the enemy line until the bottle
+            enemySlots[i] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+            if enemySlots[i] == "Error": 
+                horn.ev3.speaker.beep()
+                print("Horn read invalid color, going back to try again.")
+                horn.ev3.speaker.say("INVALID COLOR, REPOSITION BOTTLE")
+                horn.robot.straight(-200)
+                horn.ev3.speaker.beep()
+                enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                if enemySlots[enemyLinesPassed] == "Error": # After reading bottle again, if it is still invalid, treat it as artillery
+                    enemySlots[enemyLinesPassed] = {
+                    "type": "Artillery",
+                    "strenght": 500,
+                    "n_attacks": 1,
+                    "health": 50
+                    }
+            horn.ev3.speaker.beep()
+        
+            # #* Enemy attacks if it reached the bottle, or goes backwards if it reached the final black line
+            # if enemySlots[i] != "No bottle": # Enemy reached a bottle
+            #     attackNumber = random.randint(1, 2)
+            #     if attackNumber == 1:
+            #         print("Crane Attack\n")
+            #         attack.craneAttack(False, horn, calibration, calibration.followingMovementSpeed, 150)
+            #     elif attackNumber == 2:
+            #         print("Headbutt Attack\n")
+            #         attack.headbutt(False, horn, calibration, calibration.followingMovementSpeed)
+            #         horn.ev3.speaker.beep()
+            #         horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
+            #     elif attackNumber == 3:
+            #         attack.soundAttack(horn.ev3)
+            # else: # Enemy didn't reach a bottle
+            #     #movement.followEnemyLineBackUntilTime(horn.ev3, horn.robot, horn.lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, calibration.followingMovementSpeed, 2000)
+            #     horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
+            # horn.ev3.speaker.beep()
+                
+            #* horn.Robot goes backwards until the black tape and rotates back to the main line 
+            horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
+            movement.followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
+            horn.ev3.speaker.beep()
+            horn.robot.turn(movement.calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
+            horn.ev3.speaker.beep()
+            gameInfo.currentPosition = i + 1
+
+        i+= 1
 
 
     # After reaching final enemy line, Horn rotates and goes back to the beginning
@@ -112,7 +116,7 @@ def recognizeBoard(horn, calibration):
     horn.ev3.speaker.beep()
     horn.robot.turn(movement.calibratedTurn(-190, calibration))
     horn.ev3.speaker.beep()
-    movement.goBackToFirstEnemyLine(horn, calibration, calibration.followingMovementSpeed*2)
+    movement.goBackToFirstEnemyLine(horn, calibration, calibration.followingMovementSpeed*2, gameInfo)
     # Doesn't need a beep because reaching the first enemy line in the last function beeps
     movement.goBackTime(horn, calibration, calibration.followingMovementSpeed, 4000)
     horn.ev3.speaker.beep()
@@ -120,88 +124,3 @@ def recognizeBoard(horn, calibration):
 
     print(enemySlots)
 
-
-def recognizeFullBoard(horn, calibration):
-
-    enemyLinesPassed = 0
-
-    #* Horn plays the game until reaching the final line
-    while enemyLinesPassed < 6:
-
-        movement.followMainLineUntilNextEnemyLine(False, horn, calibration, calibration.followingMovementSpeed*2)
-        horn.ev3.speaker.beep()
-        
-        print("Following main line. Enemy line reached: ", enemyLinesPassed)
-
-        #* Horn sets itself up, and rotates to the enemy line
-        movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2000)
-        horn.ev3.speaker.beep()
-        horn.robot.turn(movement.calibratedTurn(-130 * calibration.negativeTurnCalibration, calibration))
-        horn.ev3.speaker.beep()
-        
-        #* horn.Robot follows the enemy line until the bottle
-        enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
-        if enemySlots[enemyLinesPassed] == "Error": 
-            horn.ev3.speaker.beep()
-            print("Horn read invalid color, going back to try again.")
-            horn.ev3.speaker.say("INVALID COLOR, REPOSITION BOTTLE")
-            horn.robot.straight(-200)
-            horn.ev3.speaker.beep()
-            enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
-            if enemySlots[enemyLinesPassed] == "Error": # After reading bottle again, if it is still invalid, treat it as artillery
-                enemySlots[enemyLinesPassed] = {
-                "type": "Artillery",
-                "strenght": 500,
-                "n_attacks": 1,
-                "health": 50
-                }
-        horn.ev3.speaker.beep()
-       
-        #* Enemy attacks if it reached the bottle, or goes backwards if it reached the final black line
-        if enemySlots[enemyLinesPassed] != "No bottle": # Enemy reached a bottle
-            attackNumber = random.randint(1, 2)
-            if attackNumber == 1:
-                print("Crane Attack\n")
-                attack.craneAttack(False, horn, calibration, calibration.followingMovementSpeed, 150)
-            elif attackNumber == 2:
-                print("Headbutt Attack\n")
-                attack.headbutt(False, horn, calibration, calibration.followingMovementSpeed)
-                horn.ev3.speaker.beep()
-                horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-            elif attackNumber == 3:
-                attack.soundAttack(horn.ev3)
-        else: # Enemy didn't reach a bottle
-            #movement.followEnemyLineBackUntilTime(horn.ev3, horn.robot, horn.lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, calibration.followingMovementSpeed, 2000)
-            horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-        horn.ev3.speaker.beep()
-            
-        #* horn.Robot goes backwards until the black tape and rotates back to the main line 
-        movement.followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
-        horn.ev3.speaker.beep()
-        horn.robot.turn(movement.calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
-        horn.ev3.speaker.beep()
-        enemyLinesPassed += 1
-
-
-    # After reaching final enemy line, Horn rotates and goes back to the beginning
-    print("End of the board reached, going back to the beginning.")
-    movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 3000)
-    horn.ev3.speaker.beep()
-    horn.robot.turn(movement.calibratedTurn(-190, calibration))
-    horn.ev3.speaker.beep()
-    movement.goBackToFirstEnemyLine(horn, calibration, calibration.followingMovementSpeed*2)
-    # Doesn't need a beep because reaching the first enemy line in the last function beeps
-    movement.goBackTime(horn, calibration, calibration.followingMovementSpeed, 4000)
-    horn.ev3.speaker.beep()
-    horn.robot.turn(movement.calibratedTurn(180, calibration))
-
-    print(enemySlots)
-
-
-def beginTurn(horn, calibration):
-    
-    #* Regain energy
-    hornEnergy = hornEnergy + 0.5 * hornEnergy
-    if hornEnergy > 500:
-        hornEnergy = 500
-    

@@ -31,8 +31,16 @@ class Calibration:
     negativeTurnCalibration = 1.1
     followingMovementSpeed = 100
 
+class Game: 
+    currentPosition = 0 # Position 0 - Positioned before the first enemy line
+    hornHealth = 750
+    hornEnergy = 500
+    enemySlots = ["Dead","","Dead","","Dead","Dead"]
+    currentSlot = 0
+
 calibration = Calibration()
 horn = Horn()
+gameInfo = Game()
 horn.robot.settings(100, 1000, 100, 1000)
 
 
@@ -51,16 +59,15 @@ horn.robot.settings(100, 1000, 100, 1000)
 # light_thread.start()
 # logo_thread = Thread(target=aesthetics.logo, args=(ev3,))
 # logo_thread.start()
-# sound_thread = Thread(target=sound.tokio, args=(ev3,))
+# sound_thread = Thread(target=sound.tokio, args=(horn.ev3,))
 # sound_thread.start()
 # wait(100000000)
 
 #! Play game
 
-movement.followMainLineUntilEnemyLine(False, horn, calibration, calibration.followingMovementSpeed, -1, 2)
+# horn.robot.straight(100)
+# movement.followMainLineUntilEnemyLine(False, horn, calibration, calibration.followingMovementSpeed, -1, 2)
 
+game.recognizeBoard(horn, calibration, gameInfo)
 
-while True:
-    break
-    # game.recognizeBoard(horn, calibration)
 
