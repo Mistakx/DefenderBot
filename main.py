@@ -7,7 +7,7 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from threading import Thread
 
-import movement, calibration, game, attacks, sound, aesthetics
+import movement, calibration, game, attack, sound, aesthetics
 
 #! Initialization
 class Horn:
@@ -35,8 +35,8 @@ class Game:
     currentPosition = 0 # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    enemySlots = ["Dead","","Dead","","Dead","Dead"]
-    currentSlot = 0
+    # enemySlots = ["Dead","","Dead","","Dead",""]
+    enemySlots = ['Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 100, 'n_attacks': 3, 'health': 100, 'positioned_this_turn': True, 'type': 'Infantry'}]
 
 calibration = Calibration()
 horn = Horn()
@@ -64,10 +64,6 @@ horn.robot.settings(100, 1000, 100, 1000)
 # wait(100000000)
 
 #! Play game
-
-# horn.robot.straight(100)
-# movement.followMainLineUntilEnemyLine(False, horn, calibration, calibration.followingMovementSpeed, -1, 2)
-
-game.recognizeBoard(horn, calibration, gameInfo)
+game.playGame(horn, calibration, gameInfo)
 
 

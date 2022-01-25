@@ -8,16 +8,10 @@ def identifyEnemy(ev3, enemyColorSensor):
     # TODO: Exception if the color isn't one of the correct ones.
 
     enemyColor = enemyColorSensor.color()
-    print("Color reached: ", enemyColor)
+    print("\nColor reached: ", enemyColor)
 
-    if enemyColor == Color.BLUE:
+    if enemyColor == Color.BLUE: # Error
         #ev3.speaker.say('Blue')
-        # infantry = {
-        #     "type": "Infantry",
-        #     "strenght": 100,
-        #     "n_attacks": 3,
-        #     "health": 100
-        # }
         return "Error"
 
     elif enemyColor == Color.GREEN: # Infantry
@@ -26,7 +20,8 @@ def identifyEnemy(ev3, enemyColorSensor):
             "type": "Infantry",
             "strenght": 100,
             "n_attacks": 3,
-            "health": 100
+            "health": 100,
+            "positioned_this_turn": True
         }
         return infantry
 
@@ -36,7 +31,8 @@ def identifyEnemy(ev3, enemyColorSensor):
             "type": "Artillery",
             "strenght": 500,
             "n_attacks": 1,
-            "health": 50
+            "health": 50,
+            "positioned_this_turn": True
         }
         return artillery
 
@@ -46,12 +42,13 @@ def identifyEnemy(ev3, enemyColorSensor):
             "type": "Tank",
             "strenght": 200,
             "n_attacks": 2,
-            "health": 200
+            "health": 200,
+            "positioned_this_turn": True
         }
         return tank
 
-    elif enemyColor == Color.BLACK:
-    #ev3.speaker.say('Black')
+    elif enemyColor == Color.BLACK: # Error
+        #ev3.speaker.say('Blue')
         return "Error"
 
     else:

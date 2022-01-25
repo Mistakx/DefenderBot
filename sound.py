@@ -6,7 +6,7 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-import movement, calibration, game, attacks
+import movement, calibration, game, attack
 
 def speak(ev3):
     ev3.speaker.set_volume(100, which='_all_')

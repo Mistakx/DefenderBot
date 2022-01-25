@@ -8,12 +8,6 @@ import random
 
 import movement, calibration, attack
 
-#! Game state
-hornHealth = 750
-hornEnergy = 500
-enemySlots = ["","","","","",""]
-currentSlot = 0
-
 #! Heuristics
 # Optimum energy point - 333 energy at the end of the turn.
 # Life can surpass 750, is worth less than energy
@@ -41,21 +35,21 @@ currentSlot = 0
 #* 6 Infantry: 
 # 3 Sounds, 300 + 150 damage
 
-# Worst case scenario: 6 tanks - 
+# Worst case scenario: 6 tanks -
 
-# TODO
+
+#* Horn recognizes the necessary board slots, and saves the enemies to the corresponding slots
 def recognizeBoard(horn, calibration, gameInfo):
 
-    #* Horn plays the game until reaching the final line
     i = 0
+
     while i < 6:
 
         if ( (gameInfo.enemySlots[i] == "") and (gameInfo.enemySlots[i] != "Dead") ): # Only recognize valid slots
            
             print("Slot "+ str(i+1) + " needs to be recognized.\n")
-           
-            movement.followMainLineUntilEnemyLine(False, horn, calibration, calibration.followingMovementSpeed*2, gameInfo.currentPosition, i+1)
-            horn.ev3.speaker.beep()
+            movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+            # horn.ev3.speaker.beep()
             
             #* Horn sets itself up, and rotates to the enemy line
             movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2000)
@@ -64,41 +58,26 @@ def recognizeBoard(horn, calibration, gameInfo):
             horn.ev3.speaker.beep()
             
             #* horn.Robot follows the enemy line until the bottle
-            enemySlots[i] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
-            if enemySlots[i] == "Error": 
+            gameInfo.enemySlots[i] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+            if gameInfo.enemySlots[i] == "Error": 
                 horn.ev3.speaker.beep()
-                print("Horn read invalid color, going back to try again.")
+                print("Recognition: Horn read invalid color, going back to try again.")
                 horn.ev3.speaker.say("INVALID COLOR, REPOSITION BOTTLE")
+                wait(1000) # Waits for player to reposition bottle
                 horn.robot.straight(-200)
                 horn.ev3.speaker.beep()
-                enemySlots[enemyLinesPassed] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
-                if enemySlots[enemyLinesPassed] == "Error": # After reading bottle again, if it is still invalid, treat it as artillery
-                    enemySlots[enemyLinesPassed] = {
+                gameInfo.enemySlots[i] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                if gameInfo.enemySlots[i] == "Error": # After reading bottle again, if it is still invalid, treat it as artillery
+                    print("Recognition: Enemy still invalid. Treating it as Artillery.")
+                    gameInfo.enemySlots[i] = {
                     "type": "Artillery",
                     "strenght": 500,
                     "n_attacks": 1,
-                    "health": 50
+                    "health": 50,
+                    "positioned_this_turn": True
                     }
             horn.ev3.speaker.beep()
         
-            # #* Enemy attacks if it reached the bottle, or goes backwards if it reached the final black line
-            # if enemySlots[i] != "No bottle": # Enemy reached a bottle
-            #     attackNumber = random.randint(1, 2)
-            #     if attackNumber == 1:
-            #         print("Crane Attack\n")
-            #         attack.craneAttack(False, horn, calibration, calibration.followingMovementSpeed, 150)
-            #     elif attackNumber == 2:
-            #         print("Headbutt Attack\n")
-            #         attack.headbutt(False, horn, calibration, calibration.followingMovementSpeed)
-            #         horn.ev3.speaker.beep()
-            #         horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-            #     elif attackNumber == 3:
-            #         attack.soundAttack(horn.ev3)
-            # else: # Enemy didn't reach a bottle
-            #     #movement.followEnemyLineBackUntilTime(horn.ev3, horn.robot, horn.lineColorSensor, boardBlue, enemyLineBlue, enemyLineColor, proportionalGain, calibration.followingMovementSpeed, 2000)
-            #     horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-            # horn.ev3.speaker.beep()
-                
             #* horn.Robot goes backwards until the black tape and rotates back to the main line 
             horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
             movement.followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
@@ -109,18 +88,120 @@ def recognizeBoard(horn, calibration, gameInfo):
 
         i+= 1
 
+#* Horn regains 50% of it's current energy, never exceeding 500
+def regainEnergy(horn, gameInfo):
 
-    # After reaching final enemy line, Horn rotates and goes back to the beginning
-    print("End of the board reached, going back to the beginning.")
-    movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 3000)
-    horn.ev3.speaker.beep()
-    horn.robot.turn(movement.calibratedTurn(-190, calibration))
-    horn.ev3.speaker.beep()
-    movement.goBackToFirstEnemyLine(horn, calibration, calibration.followingMovementSpeed*2, gameInfo)
-    # Doesn't need a beep because reaching the first enemy line in the last function beeps
-    movement.goBackTime(horn, calibration, calibration.followingMovementSpeed, 4000)
-    horn.ev3.speaker.beep()
-    horn.robot.turn(movement.calibratedTurn(180, calibration))
+    print("Regaining Energy")
 
-    print(enemySlots)
+    horn.ev3.speaker.play_file(SoundFile.READY)
+    
+    gameInfo.hornEnergy = gameInfo.hornEnergy + 0.5 * gameInfo.hornEnergy
+    if gameInfo.hornEnergy > 500:
+        gameInfo.hornEnergy = 500
 
+    print("Horn Energy:", gameInfo.hornEnergy)
+    
+#* Horn attacks the enemies according to the defined heuristics
+def attackEnemies(horn, calibration, gameInfo):
+
+    def attackArtilleries(horn, calibration, gameInfo):
+
+        i = 0
+
+        while (i < 6):
+            
+            if (gameInfo.enemySlots[i] != "") and (gameInfo.enemySlots[i] != "Dead"):
+
+                if (gameInfo.enemySlots[i])["type"] == "Artillery":
+                        
+                    print("Slot "+ str(i + 1) + " has artillery so it needs to be attacked.\n")
+                
+                    movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+                    # horn.ev3.speaker.beep()
+                    
+                    #* Horn sets itself up, and rotates to the enemy line
+                    movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2000)
+                    horn.ev3.speaker.beep()
+                    horn.robot.turn(movement.calibratedTurn(-130 * calibration.negativeTurnCalibration, calibration))
+                    horn.ev3.speaker.beep()
+                    
+                    #* horn.Robot follows the enemy line until the bottle
+                    movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                    attack.soundAttack(horn, gameInfo, i)
+                    horn.ev3.speaker.beep()
+                
+                    #* horn.Robot goes backwards until the black tape and rotates back to the main line 
+                    horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
+                    movement.followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
+                    horn.ev3.speaker.beep()
+                    horn.robot.turn(movement.calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
+                    horn.ev3.speaker.beep()
+                    gameInfo.currentPosition = i + 1
+
+            i = i + 1
+
+    attackArtilleries(horn, calibration, gameInfo)      
+
+#* Horn gets atacked by the enemies
+def enemiesAttack(horn, calibration, gameInfo):
+    
+    i = 0
+
+    while i < 6:
+
+        if ( (gameInfo.enemySlots[i] != "") and (gameInfo.enemySlots[i] != "Dead") ): # Only get attacked by valid slots
+           
+            #* Horn goes to the enemy line that is going to attack
+            movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+            # horn.ev3.speaker.beep()
+
+            #* Horn gets attacked
+            # TODO: Different sound for each enemy
+            if (gameInfo.enemySlots[i])["n_attacks"] > 0:
+                gameInfo.hornHealth = gameInfo.hornHealth - (gameInfo.enemySlots[i])["strenght"]
+                (gameInfo.enemySlots[i])["n_attacks"] = (gameInfo.enemySlots[i])["n_attacks"] - 1
+                horn.ev3.speaker.say("Horn was attacked.")
+            else:
+                horn.ev3.speaker.say("Enemy is out of attacks.")
+
+            print("Horn Health:", gameInfo.hornHealth)
+            # horn.robot.straight(200)
+
+        
+        i = i + 1
+
+
+
+            
+
+    return
+
+#* Horn plays the game
+def playGame(horn, calibration, gameInfo):
+
+    #! Energy regain
+    regainEnergy(horn, gameInfo)
+    print("Horn Health:", gameInfo.hornHealth)
+    print()
+
+    #! Board recognition
+    #* If all enemies are enemies dead, scanned already, or a mixture of the two, then Horn doesn't need to recognize the board.
+    boardNeedsRecognition = False
+    i = 0
+    while i < 6:
+        if (gameInfo.enemySlots[i] == ""):
+            boardNeedsRecognition = True
+        i = i + 1
+
+    if boardNeedsRecognition:
+        recognizeBoard(horn, calibration, gameInfo)
+        movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+    print(gameInfo.enemySlots)
+
+    #! Horn attacks
+    attackEnemies(horn, calibration, gameInfo)
+    movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+    print(gameInfo.enemySlots)
+
+    #! Enemy attacks
+    enemiesAttack(horn, calibration, gameInfo)
