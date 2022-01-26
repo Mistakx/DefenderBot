@@ -35,8 +35,9 @@ class Game:
     currentPosition = 0 # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
+    enemySlots = ["","","","","",""]
     # enemySlots = ["Dead","","Dead","","Dead",""]
-    enemySlots = ['Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 100, 'n_attacks': 3, 'health': 100, 'positioned_this_turn': True, 'type': 'Infantry'}]
+    # enemySlots = ['Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 100, 'n_attacks': 3, 'health': 100, 'positioned_this_turn': True, 'type': 'Infantry'}]
 
 calibration = Calibration()
 horn = Horn()
