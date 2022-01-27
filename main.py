@@ -23,11 +23,11 @@ class Horn:
 class Calibration:
     mainLineReflection = 10 # Parameter used to walk the main line
     boardReflection = 35 # Parameter used to walk the main line (35)
-    boardBlue = 50 # Parameter used to walk the enemy line (65)
-    enemyLineBlue = 20 # Parameter used to walk the enemy line (25)
+    boardBlue = 65 # Parameter used to walk the enemy line (65)
+    enemyLineBlue = 30 # Parameter used to walk the enemy line (25)
     enemyLineColor= Color.RED
     proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
-    turnCalibrationTo360 = 1050
+    turnCalibrationTo360 = 930
     negativeTurnCalibration = 1.1
     followingMovementSpeed = 100
 
@@ -36,21 +36,21 @@ class Game:
     hornHealth = 750
     hornEnergy = 500
     enemySlots = ["","","","","",""]
+    # enemySlots = [{'n_attacks': 2, 'health': 200, 'type': 'Tank'}, {'n_attacks': 2, 'health': 200, 'type': 'Tank'}, {'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, {'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, {'n_attacks': 3, 'health': 100, 'type': 'Infantry'}, {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
     # enemySlots = ["Dead","","Dead","","Dead",""]
-    # enemySlots = ['Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 500, 'n_attacks': 1, 'health': 50, 'positioned_this_turn': True, 'type': 'Artillery'}, 'Dead', {'strenght': 100, 'n_attacks': 3, 'health': 100, 'positioned_this_turn': True, 'type': 'Infantry'}]
 
-calibration = Calibration()
+calibrationInstance = Calibration()
 horn = Horn()
 gameInfo = Game()
 horn.robot.settings(100, 1000, 100, 1000)
 
 
 #! Calibration
-#robot.turn(1050)
+# horn.robot.turn(900)
 #robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
-#calibration.printLineColorSensor(lineColorSensor)
-#calibration.printEnemyColorSensor(enemyColorSensor)
-#calibration.printDistance(distanceSensor)
+# calibration.printLineColorSensor(horn.lineColorSensor)
+# calibration.printEnemyColorSensor(horn.enemyColorSensor)
+#calibration.printDistance(horn.distanceSensor)
 
 #! Aesthetics
 #ev3.speaker.say("For you sir, I'm always ready.")
@@ -65,6 +65,6 @@ horn.robot.settings(100, 1000, 100, 1000)
 # wait(100000000)
 
 #! Play game
-game.playGame(horn, calibration, gameInfo)
-
+game.playGame(horn, calibrationInstance, gameInfo)
+# movement.goBackToFirstEnemyLine(horn, calibration, calibration.followingMovementSpeed*2, gameInfo)
 

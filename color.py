@@ -18,10 +18,10 @@ def identifyEnemy(ev3, enemyColorSensor):
         #ev3.speaker.say('Green')
         infantry = {
             "type": "Infantry",
-            "strenght": 100,
+            # "strength": 100,
             "n_attacks": 3,
             "health": 100,
-            "positioned_this_turn": True
+            # "positioned_this_turn": True
         }
         return infantry
 
@@ -29,10 +29,10 @@ def identifyEnemy(ev3, enemyColorSensor):
         #ev3.speaker.say('Yellow')
         artillery = {
             "type": "Artillery",
-            "strenght": 500,
+            "strength": 500,
             "n_attacks": 1,
             "health": 50,
-            "positioned_this_turn": True
+            # "positioned_this_turn": True
         }
         return artillery
 
@@ -40,10 +40,10 @@ def identifyEnemy(ev3, enemyColorSensor):
         #ev3.speaker.say('Red')
         tank = {
             "type": "Tank",
-            "strenght": 200,
+            # "strength": 200,
             "n_attacks": 2,
             "health": 200,
-            "positioned_this_turn": True
+            # "positioned_this_turn": True
         }
         return tank
 

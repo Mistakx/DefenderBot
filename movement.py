@@ -287,7 +287,7 @@ def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed, gameInfo):
                 timerLastEnemyLinePassed = timer.time()
                 enemyLinesPassed += 1
                 horn.ev3.speaker.beep()
-                print("Going back, number of lines passed: ", enemyLinesPassed)
+                print("Going back, lines passed: ", enemyLinesPassed)
 
             # After that, the instant the horn.robot passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
             else:
@@ -301,6 +301,7 @@ def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed, gameInfo):
         if enemyLinesPassed == gameInfo.currentPosition:
             gameInfo.currentPosition = 0 
             horn.robot.stop()
+            print() # New line after the last going back print
             return
 
 def goBackTime(horn, calibration, followingMovementSpeed, timeToFollow):
@@ -335,10 +336,10 @@ def goBackTime(horn, calibration, followingMovementSpeed, timeToFollow):
 
 #! Multiple movements
 
+#* Horn rotates, goes back to beggining, and rotates again  
 def rotateAndGoToBeggining(horn, calibration, gameInfo):
-    #* Horn rotates, goes back to beggining, and rotates again  
  
-    print("End of the board reached, going back to the beginning.")
+    # print("End of the board reached, going back to the beginning.")
     followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 3000)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(-190, calibration))
@@ -348,3 +349,12 @@ def rotateAndGoToBeggining(horn, calibration, gameInfo):
     goBackTime(horn, calibration, calibration.followingMovementSpeed, 4000)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(180, calibration))
+
+#* Horn goes backwards until the black tape and rotates back to the main line 
+def goBackwardsAndRotate(horn, calibration):
+    horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
+    movement.followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
+    horn.ev3.speaker.beep()
+    horn.robot.turn(movement.calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
+    horn.ev3.speaker.beep()
+    gameInfo.currentPosition = i + 1
