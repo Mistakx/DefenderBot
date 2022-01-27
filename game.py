@@ -186,6 +186,8 @@ def attackEnemies(horn, calibration, gameInfo):
         #! There are artilleries to attack this turn
         if (numberOfArtilleriesReady >= 1):
 
+            print("There are artilleries to attack.")
+
             # Horn can do up to 3 sound attacks per turn and still regain full energy.
             # The artilleries need to be prioritized, and always sound attacked attacked, regardless of energy.
             # If Horn has energy to attack all artilleries, and still sound attack one or more enemies, it sound attacks them.
@@ -267,6 +269,8 @@ def attackEnemies(horn, calibration, gameInfo):
 
         if numberOfEnemies >= 3:
 
+            print("There are more than 3 enemies to attack.")
+
             while gameInfo.hornEnergy > 350:
 
                 while (i < 6):
@@ -292,16 +296,21 @@ def attackEnemies(horn, calibration, gameInfo):
 
                     i += 1
 
+    # Attack an enemy
     def headbuttEnemy(horn, calibration, gameInfo):
         
-        while gameInfo.hornEnergy > 350:
+        if (gameInfo.hornEnergy == 500):
+
+            i = 0
 
             while (i < 6):
 
                 currentEnemy = gameInfo.enemySlots[i]
 
                 if (enemyIsAttackingNextTurn(gameInfo, i)):
-    
+                    
+                    print("Headbutting slot " + str(i+1))
+
                     movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
                     # horn.ev3.speaker.beep()
                     
@@ -313,7 +322,7 @@ def attackEnemies(horn, calibration, gameInfo):
                     
                     #* horn.Robot follows the enemy line until the bottle
                     movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
-                    attack.headbutt(horn, gameInfo, i)
+                    attack.headbutt(False, horn, calibration, gameInfo, i, calibration.followingMovementSpeed)
                     horn.ev3.speaker.beep()
                 
                     movement.goBackwardsAndRotate(horn, calibration)
@@ -407,12 +416,14 @@ def playGame(horn, calibration, gameInfo):
             print("Board needs recognition.")
             recognizeBoard(horn, calibration, gameInfo)
             print(gameInfo.enemySlots)
+            print()
             movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
 
         #! Horn attacks
         attackEnemies(horn, calibration, gameInfo)
         movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
         print(gameInfo.enemySlots)
+        print()
 
         #! Enemy attacks
         enemiesAttack(horn, calibration, gameInfo)

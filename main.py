@@ -26,7 +26,7 @@ class Calibration:
     boardBlue = 75 # Parameter used to walk the enemy line (65)
     enemyLineBlue = 40 # Parameter used to walk the enemy line (25)
     enemyLineColor= Color.RED
-    proportionalGain = 6 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+    proportionalGain = 5 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
     turnCalibrationTo360 = 930
     negativeTurnCalibration = 1.1
     followingMovementSpeed = 100

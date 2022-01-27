@@ -8,7 +8,7 @@ def identifyEnemy(ev3, enemyColorSensor):
     # TODO: Exception if the color isn't one of the correct ones.
 
     enemyColor = enemyColorSensor.color()
-    print("\nColor reached: ", enemyColor)
+    print("Color reached: ", enemyColor)
 
     if enemyColor == Color.BLUE: # Error
         #ev3.speaker.say('Blue')
