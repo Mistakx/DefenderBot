@@ -353,8 +353,8 @@ def rotateAndGoToBeggining(horn, calibration, gameInfo):
 #* Horn goes backwards until the black tape and rotates back to the main line 
 def goBackwardsAndRotate(horn, calibration):
     horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
-    movement.followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
+    followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
     horn.ev3.speaker.beep()
-    horn.robot.turn(movement.calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
+    horn.robot.turn(calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
     horn.ev3.speaker.beep()
-    gameInfo.currentPosition = i + 1
+    

@@ -108,7 +108,8 @@ def recognizeBoard(horn, calibration, gameInfo):
                     }
             horn.ev3.speaker.beep()
         
-            goBackwardsAndRotate(horn, calibration)
+            movement.goBackwardsAndRotate(horn, calibration)
+            gameInfo.currentPosition = i + 1
 
         i+= 1
 
@@ -165,8 +166,20 @@ def attackEnemies(horn, calibration, gameInfo):
         i = 0
         while (i < 6):
             currentEnemy = gameInfo.enemySlots[i]
-            if (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0):
+            if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0) ):
                 numberOfArtilleriesReady += 1
+            i += 1
+
+
+        #! Counts the number of non artilleries
+        numberOfNonArtilleriesReady = 0
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Infantry") and (currentEnemy["n_attacks"] > 0) ):
+                numberOfNonArtilleriesReady += 1
+            elif ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Tank") and (currentEnemy["n_attacks"] > 0) ):
+                numberOfNonArtilleriesReady += 1
             i += 1
 
 
@@ -183,7 +196,12 @@ def attackEnemies(horn, calibration, gameInfo):
 
             #! Add non artilleries to be attacked to the array
             i = 0
-            while (numberOfNonArtilleriesAddedToArray < numberOfAttacksToNonArtilleries):
+
+            # Add to the array while:
+            # Number of non artilleries added hasn't reached the number of attacks possible
+            # Number of non artilleries added hasn't reached the number of total non artilleries in the board
+            # TODO: Verify
+            while ( (numberOfNonArtilleriesAddedToArray < numberOfAttacksToNonArtilleries) and (numberOfNonArtilleriesAddedToArray < numberOfNonArtilleriesReady) ):
                 currentEnemy = gameInfo.enemySlots[i]
                 if (enemyIsAttackingNextTurn(gameInfo, i) and currentEnemy["type"] != "Artillery"):
                     # slotsToSoundAttack[numberOfNonArtilleriesAddedToArray] = i + 1
@@ -201,7 +219,7 @@ def attackEnemies(horn, calibration, gameInfo):
 
                 currentEnemy = gameInfo.enemySlots[i]
 
-                if (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0):
+                if (enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0)):
                     # slotsToSoundAttack[currentArrayIndex] = i + 1
                     slotsToSoundAttack.append(i+1)
                     print("Artillery queued to be attacked. Slot: " + str(i +1))
@@ -233,7 +251,8 @@ def attackEnemies(horn, calibration, gameInfo):
                 horn.ev3.speaker.beep()
             
                 movement.goBackwardsAndRotate(horn, calibration)
-    
+                gameInfo.currentPosition = slotToAttack - 1
+
     # If there are 3 or more enemies, sound attack 3 of them
     def attackThreeEnemies(horn, calibration, gameInfo):
 
@@ -269,6 +288,7 @@ def attackEnemies(horn, calibration, gameInfo):
                         horn.ev3.speaker.beep()
                     
                         movement.goBackwardsAndRotate(horn, calibration)
+                        gameInfo.currentPosition = i + 1
 
                     i += 1
 
@@ -297,7 +317,7 @@ def attackEnemies(horn, calibration, gameInfo):
                     horn.ev3.speaker.beep()
                 
                     movement.goBackwardsAndRotate(horn, calibration)
-                    return #
+                    gameInfo.currentPosition = i + 1
 
                 i += 1
 
@@ -308,8 +328,6 @@ def attackEnemies(horn, calibration, gameInfo):
     
     #* If there are 3 or more enemies, sound attack them
     attackThreeEnemies(horn, calibration, gameInfo)
-
-    #
 
 
 #* Horn skips dead enemies and slots with no bottles
@@ -383,11 +401,11 @@ def playGame(horn, calibration, gameInfo):
                 boardNeedsRecognition = True
             i = i + 1
 
-        if boardNeedsRecognition:
-            print("Board needs recognition.")
-            recognizeBoard(horn, calibration, gameInfo)
-            print(gameInfo.enemySlots)
-            movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        # if boardNeedsRecognition:
+        #     print("Board needs recognition.")
+        #     recognizeBoard(horn, calibration, gameInfo)
+        #     print(gameInfo.enemySlots)
+        #     movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
 
         #! Horn attacks
         attackEnemies(horn, calibration, gameInfo)

@@ -23,10 +23,10 @@ class Horn:
 class Calibration:
     mainLineReflection = 10 # Parameter used to walk the main line
     boardReflection = 35 # Parameter used to walk the main line (35)
-    boardBlue = 65 # Parameter used to walk the enemy line (65)
-    enemyLineBlue = 30 # Parameter used to walk the enemy line (25)
+    boardBlue = 75 # Parameter used to walk the enemy line (65)
+    enemyLineBlue = 40 # Parameter used to walk the enemy line (25)
     enemyLineColor= Color.RED
-    proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+    proportionalGain = 6 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
     turnCalibrationTo360 = 930
     negativeTurnCalibration = 1.1
     followingMovementSpeed = 100
@@ -36,7 +36,7 @@ class Game:
     hornHealth = 750
     hornEnergy = 500
     enemySlots = ["","","","","",""]
-    # enemySlots = [{'n_attacks': 2, 'health': 200, 'type': 'Tank'}, {'n_attacks': 2, 'health': 200, 'type': 'Tank'}, {'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, {'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, {'n_attacks': 3, 'health': 100, 'type': 'Infantry'}, {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
+    enemySlots = [{'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, 'No bottle', 'No bottle', 'No bottle', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
     # enemySlots = ["Dead","","Dead","","Dead",""]
 
 calibrationInstance = Calibration()
