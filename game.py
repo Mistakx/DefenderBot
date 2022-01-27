@@ -141,7 +141,7 @@ def attackEnemies(horn, calibration, gameInfo):
         i = 0
         while (i < 6):
             currentEnemy = gameInfo.enemySlots[i]
-            if (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0):
+            if ( enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition) and (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0) ):
                 artilleryAttacksNextTurn = True
             i += 1
 
@@ -329,6 +329,8 @@ def attackEnemies(horn, calibration, gameInfo):
     #* If there are 3 or more enemies, sound attack them
     attackThreeEnemies(horn, calibration, gameInfo)
 
+    # If there are less than 3 enemies
+    headbuttEnemy(horn, calibration, gameInfo)
 
 #* Horn skips dead enemies and slots with no bottles
 #* Horn gets atacked by the enemies that can attack
@@ -401,11 +403,11 @@ def playGame(horn, calibration, gameInfo):
                 boardNeedsRecognition = True
             i = i + 1
 
-        # if boardNeedsRecognition:
-        #     print("Board needs recognition.")
-        #     recognizeBoard(horn, calibration, gameInfo)
-        #     print(gameInfo.enemySlots)
-        #     movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        if boardNeedsRecognition:
+            print("Board needs recognition.")
+            recognizeBoard(horn, calibration, gameInfo)
+            print(gameInfo.enemySlots)
+            movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
 
         #! Horn attacks
         attackEnemies(horn, calibration, gameInfo)
