@@ -132,7 +132,7 @@ def attackEnemies(horn, calibration, gameInfo):
     # Detects if Horn needs to skip it's turn to regain energy 
     def regainEnergyIfNecessary(gameInfo):
         
-        if gameInfo.hornEnergy == 500:
+        if gameInfo.hornEnergy >= 450:
             print("Horn doesn't need to regain energy.\n")
             return False
 
@@ -141,7 +141,7 @@ def attackEnemies(horn, calibration, gameInfo):
         i = 0
         while (i < 6):
             currentEnemy = gameInfo.enemySlots[i]
-            if ( enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition) and (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0) ):
+            if ( enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition) and (currentEnemy["type"] == "Artillery") ):
                 artilleryAttacksNextTurn = True
             i += 1
 
@@ -158,6 +158,62 @@ def attackEnemies(horn, calibration, gameInfo):
 
             return False
 
+    # If there is only one more enemy left, crane attack it
+    def craneAttack():
+
+        #! Counts the number of dead enemies
+        numberOfDeadEnemies = 0
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if (currentEnemy == "Dead"):
+                numberOfDeadEnemies += 1
+            i += 1
+
+        #! Counts the number of enemies out of attacks
+        numberOfEnemiesOutOfAttacks = 0
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if ( (currentEnemy != "Dead") and (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy["n_attacks"] == 0) ):
+                numberOfEnemiesOutOfAttacks += 1
+            i += 1
+
+
+        #! If there are already 5 dead or out of attacks enemies, crane attack the remaining one
+        if ( (numberOfDeadEnemies + numberOfEnemiesOutOfAttacks) == 5):
+
+            print("There are 5 dead or out of attack enemies.")
+
+            i = 0
+
+            while (i < 6):
+
+                currentEnemy = gameInfo.enemySlots[i]
+
+                if ( enemyIsAttackingNextTurn(gameInfo, i) ):
+                    
+                    print("Crane attacking remaining slot " + str(i+1))
+
+                    movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+                    # horn.ev3.speaker.beep()
+                    
+                    #* Horn sets itself up, and rotates to the enemy line
+                    movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2000)
+                    horn.ev3.speaker.beep()
+                    horn.robot.turn(movement.calibratedTurn(-130 * calibration.negativeTurnCalibration, calibration))
+                    horn.ev3.speaker.beep()
+                    
+                    #* horn.Robot follows the enemy line until the bottle
+                    movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                    attack.craneAttack(False, horn, calibration, gameInfo, i, calibration.followingMovementSpeed, 150)
+                    horn.ev3.speaker.beep()
+                
+                    movement.goBackwardsAndRotate(horn, calibration)
+                    gameInfo.currentPosition = i + 1
+
+                i += 1
+
     # If there are artilleries, sound attack them, and use the remaining energy to sound attack the remaining enemies
     def attackArtilleriesAndRemaining(horn, calibration, gameInfo):
 
@@ -166,7 +222,7 @@ def attackEnemies(horn, calibration, gameInfo):
         i = 0
         while (i < 6):
             currentEnemy = gameInfo.enemySlots[i]
-            if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0) ):
+            if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Artillery") ):
                 numberOfArtilleriesReady += 1
             i += 1
 
@@ -176,9 +232,9 @@ def attackEnemies(horn, calibration, gameInfo):
         i = 0
         while (i < 6):
             currentEnemy = gameInfo.enemySlots[i]
-            if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Infantry") and (currentEnemy["n_attacks"] > 0) ):
+            if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Infantry") ):
                 numberOfNonArtilleriesReady += 1
-            elif ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Tank") and (currentEnemy["n_attacks"] > 0) ):
+            elif ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Tank") ):
                 numberOfNonArtilleriesReady += 1
             i += 1
 
@@ -205,7 +261,7 @@ def attackEnemies(horn, calibration, gameInfo):
             # TODO: Verify
             while ( (numberOfNonArtilleriesAddedToArray < numberOfAttacksToNonArtilleries) and (numberOfNonArtilleriesAddedToArray < numberOfNonArtilleriesReady) ):
                 currentEnemy = gameInfo.enemySlots[i]
-                if (enemyIsAttackingNextTurn(gameInfo, i) and currentEnemy["type"] != "Artillery"):
+                if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] != "Artillery") ):
                     # slotsToSoundAttack[numberOfNonArtilleriesAddedToArray] = i + 1
                     slotsToSoundAttack.append(i+1)
                     print("Non Artillery queued to be attacked. Slot: " + str(i +1))
@@ -221,7 +277,7 @@ def attackEnemies(horn, calibration, gameInfo):
 
                 currentEnemy = gameInfo.enemySlots[i]
 
-                if (enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Artillery") and (currentEnemy["n_attacks"] > 0)):
+                if (enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["type"] == "Artillery") ):
                     # slotsToSoundAttack[currentArrayIndex] = i + 1
                     slotsToSoundAttack.append(i+1)
                     print("Artillery queued to be attacked. Slot: " + str(i +1))
@@ -253,7 +309,7 @@ def attackEnemies(horn, calibration, gameInfo):
                 horn.ev3.speaker.beep()
             
                 movement.goBackwardsAndRotate(horn, calibration)
-                gameInfo.currentPosition = slotToAttack - 1
+                gameInfo.currentPosition = slotToAttack
 
     # If there are 3 or more enemies, sound attack 3 of them
     def attackThreeEnemies(horn, calibration, gameInfo):
@@ -275,7 +331,7 @@ def attackEnemies(horn, calibration, gameInfo):
 
                 while (i < 6):
                     currentEnemy = gameInfo.enemySlots[i]
-                    if (enemyIsAttackingNextTurn(gameInfo, i)):
+                    if ( enemyIsAttackingNextTurn(gameInfo, i) ):
         
                         movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
                         # horn.ev3.speaker.beep()
@@ -296,10 +352,11 @@ def attackEnemies(horn, calibration, gameInfo):
 
                     i += 1
 
-    # Attack an enemy
+    # Attack an enemy if non of the other conditions apply
+    # TODO: Prioritize enemies with 100 hp
     def headbuttEnemy(horn, calibration, gameInfo):
         
-        if (gameInfo.hornEnergy == 500):
+        if (gameInfo.hornEnergy >= 450): # Leaving Horn with 300 energy ensures it an always use an headbutt, and regain energy back to 450 the next turn.
 
             i = 0
 
@@ -362,7 +419,7 @@ def enemiesAttack(horn, calibration, gameInfo):
             # TODO: Different sound for each enemy
             if currentEnemy["n_attacks"] > 0:
 
-                # Infantry and tanks give as much damage as they're number of health
+                # Infantry and tanks give as much damage as they have health
                 if ( (currentEnemy["type"] == "Tank") or (currentEnemy["type"] == "Infantry") ):
 
                     gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]

@@ -38,6 +38,7 @@ class Game:
     enemySlots = ["","","","","",""]
     # enemySlots = [{'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, 'No bottle', 'No bottle', 'No bottle', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
     # enemySlots = ["Dead","","Dead","","Dead",""]
+    
 
 calibrationInstance = Calibration()
 horn = Horn()

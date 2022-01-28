@@ -161,8 +161,3 @@ def soundAttack(horn, gameInfo, enemyToAttackArrayPosition):
     printEnemyTypeAndHealth(gameInfo, enemyToAttackArrayPosition)
     print("Sound attack used. New energy: " + str(gameInfo.hornEnergy))
     print()
-
-            
-
-
-         
