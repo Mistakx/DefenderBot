@@ -1,13 +1,21 @@
 #!/usr/bin/env pybricks-micropython
-from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor, InfraredSensor, UltrasonicSensor, GyroSensor)
-from pybricks.parameters import Port, Stop, Direction, Button, Color
-from pybricks.tools import wait, StopWatch, DataLog
-from pybricks.robotics import DriveBase
-from pybricks.media.ev3dev import SoundFile, ImageFile
 from threading import Thread
 
-import movement, calibration, game, attack, sound, aesthetics
+from pybricks.ev3devices import (ColorSensor, GyroSensor, InfraredSensor,
+                                 Motor, TouchSensor, UltrasonicSensor)
+from pybricks.hubs import EV3Brick
+from pybricks.media.ev3dev import ImageFile, SoundFile
+from pybricks.parameters import Button, Color, Direction, Port, Stop
+from pybricks.robotics import DriveBase
+from pybricks.tools import DataLog, StopWatch, wait
+
+import aesthetics
+import attack
+import calibration
+import game
+import movement
+import sound
+
 
 #! Initialization
 class Horn:
