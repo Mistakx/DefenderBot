@@ -31,10 +31,10 @@ class Horn:
 class Calibration:
     mainLineReflection = 10 # Parameter used to walk the main line
     boardReflection = 35 # Parameter used to walk the main line (35)
-    boardBlue = 75 # Parameter used to walk the enemy line (65)
-    enemyLineBlue = 40 # Parameter used to walk the enemy line (25)
+    boardBlue = 70 # Parameter used to walk the enemy line (65)
+    enemyLineBlue = 25 # Parameter used to walk the enemy line (25)
     enemyLineColor= Color.RED
-    proportionalGain = 5 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+    proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
     turnCalibrationTo360 = 930
     negativeTurnCalibration = 1.1
     followingMovementSpeed = 100
@@ -75,5 +75,4 @@ horn.robot.settings(100, 1000, 100, 1000)
 
 #! Play game
 game.playGame(horn, calibrationInstance, gameInfo)
-# movement.goBackToFirstEnemyLine(horn, calibration, calibration.followingMovementSpeed*2, gameInfo)
 
