@@ -116,7 +116,7 @@ def followMainLineTime(horn, calibration, followingMovementSpeed, timeToFollow):
 
 #! Enemy line
             
-def followEnemyLineUntilBottle(log, horn, calibration, followingMovementSpeed):
+def followEnemyLineUntilBottle(log, printEnemyInfo, horn, calibration, followingMovementSpeed):
 
     threshold = (calibration.enemyLineBlue + calibration.boardBlue) / 2
     if log:
@@ -161,11 +161,13 @@ def followEnemyLineUntilBottle(log, horn, calibration, followingMovementSpeed):
             enemy = color.identifyEnemy(horn.ev3, horn.enemyColorSensor)
             print("Movement: Horn has reached a bottle.")
             try:
-                print("Enemy type: ", enemy["type"])
-                print()
+                if printEnemyInfo:
+                    print("Enemy type: ", enemy["type"])
+                    print()
                 return enemy
-            except: 
-                print("Movement: Enemy invalid.\n")
+            except:
+                if printEnemyInfo:
+                    print("Movement: Enemy invalid.\n")
                 return enemy
 
         # If the bottle doesn't exist, more than 3 seconds have passed when the horn.robot reaches a black line

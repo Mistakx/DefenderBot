@@ -154,7 +154,7 @@ def soundAttack(horn, gameInfo, enemyToAttackArrayPosition):
 
     enemyToAttack = gameInfo.enemySlots[enemyToAttackArrayPosition]
 
-    horn.ev3.speaker.play_file(SoundFile.BACKING_ALERT)
+    horn.ev3.speaker.play_file("./sounds/soundAttack.rsf")
     gameInfo.hornEnergy = gameInfo.hornEnergy - 50
     enemyToAttack["health"] = enemyToAttack["health"] - 50
     if (enemyToAttack["health"]) <= 0:

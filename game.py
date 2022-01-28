@@ -68,7 +68,6 @@ def gameIsStillOn(gameInfo):
             if ( (currentEnemy == "") or (currentEnemy == "No bottle") ): # Slot still hasn't had enemy, so the game is still on
                 gameIsStillOn = True
 
-            # TODO: Check if the order of the comparisons matters.
             elif enemyIsAttackingNextTurn(gameInfo, i):
                 gameIsStillOn = True
 
@@ -96,7 +95,7 @@ def recognizeBoard(horn, calibration, gameInfo):
             movement.setItselfAndRotate(horn, calibration)
             
             #* horn.Robot follows the enemy line until the bottle
-            gameInfo.enemySlots[i] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+            gameInfo.enemySlots[i] = movement.followEnemyLineUntilBottle(False, True, horn, calibration, calibration.followingMovementSpeed)
             if gameInfo.enemySlots[i] == "Error": 
                 horn.ev3.speaker.beep()
                 print("Recognition: Horn read invalid color, going back to try again.")
@@ -104,7 +103,7 @@ def recognizeBoard(horn, calibration, gameInfo):
                 wait(1000) # Waits for player to reposition bottle
                 horn.robot.straight(-200)
                 horn.ev3.speaker.beep()
-                gameInfo.enemySlots[i] = movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                gameInfo.enemySlots[i] = movement.followEnemyLineUntilBottle(False, True, horn, calibration, calibration.followingMovementSpeed)
                 if gameInfo.enemySlots[i] == "Error": # After reading bottle again, if it is still invalid, treat it as artillery
                     print("Recognition: Enemy still invalid. Treating it as Artillery.")
                     gameInfo.enemySlots[i] = {
@@ -234,7 +233,7 @@ def attackEnemies(horn, calibration, gameInfo):
                 movement.setItselfAndRotate(horn, calibration)
                 
                 #* horn.Robot follows the enemy line until the bottle
-                movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                movement.followEnemyLineUntilBottle(False, False, horn, calibration, calibration.followingMovementSpeed)
                 attack.soundAttack(horn, gameInfo, slotToAttack - 1)
                 horn.ev3.speaker.beep()
             
@@ -318,7 +317,7 @@ def attackEnemies(horn, calibration, gameInfo):
             movement.setItselfAndRotate(horn, calibration)
             
             #* Horn follows the enemy line until the bottle
-            movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+            movement.followEnemyLineUntilBottle(False, False, horn, calibration, calibration.followingMovementSpeed)
             attack.craneAttack(False, horn, calibration, gameInfo, tempEnemyArrayPosition, calibration.followingMovementSpeed, 150)
             horn.ev3.speaker.beep()
         
@@ -357,7 +356,7 @@ def attackEnemies(horn, calibration, gameInfo):
                         movement.setItselfAndRotate(horn, calibration)
                         
                         #* Horn follows the enemy line until the bottle
-                        movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                        movement.followEnemyLineUntilBottle(False, False, horn, calibration, calibration.followingMovementSpeed)
                         attack.soundAttack(horn, gameInfo, i)
                         horn.ev3.speaker.beep()
                     
@@ -397,7 +396,7 @@ def attackEnemies(horn, calibration, gameInfo):
                     movement.setItselfAndRotate(horn, calibration)
                     
                     #* horn.Robot follows the enemy line until the bottle
-                    movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                    movement.followEnemyLineUntilBottle(False, False, horn, calibration, calibration.followingMovementSpeed)
                     attack.headbutt(False, horn, calibration, gameInfo, i, calibration.followingMovementSpeed)
                     horn.ev3.speaker.beep()
                 
@@ -423,7 +422,7 @@ def attackEnemies(horn, calibration, gameInfo):
                     movement.setItselfAndRotate(horn, calibration)
                     
                     #* horn.Robot follows the enemy line until the bottle
-                    movement.followEnemyLineUntilBottle(False, horn, calibration, calibration.followingMovementSpeed)
+                    movement.followEnemyLineUntilBottle(False, False, horn, calibration, calibration.followingMovementSpeed)
                     attack.soundAttack(horn, gameInfo, i)
                     horn.ev3.speaker.beep()
                 
@@ -463,26 +462,33 @@ def enemiesAttack(horn, calibration, gameInfo):
             # TODO: Different sound for each enemy
             if currentEnemy["n_attacks"] > 0:
 
-                # Infantry and tanks give as much damage as they have health
-                if ( (currentEnemy["type"] == "Tank") or (currentEnemy["type"] == "Infantry") ):
+                # Infantry gives as much damage as its health
+                if (currentEnemy["type"] == "Infantry"):
 
                     gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
                     currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
-                    horn.ev3.speaker.play_file(SoundFile.SONAR)
+                    horn.ev3.speaker.play_file("./sounds/infantry.rsf")
+
+                # Tank gives as much damage as its health
+                if (currentEnemy["type"] == "Tank"):
+                    gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
+                    currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
+                    horn.ev3.speaker.play_file("./sounds/tank.rsf")
 
                 # If artillery attacks, it always gives 500 damage
                 elif currentEnemy["type"] == "Artillery":
                     gameInfo.hornHealth = gameInfo.hornHealth - 500
                     currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
                     horn.ev3.speaker.play_file(SoundFile.SONAR)
+                    horn.ev3.speaker.play_file("./sounds/artillery.rsf")
 
             else:
                 horn.ev3.speaker.say("Enemy is out of attacks.")
 
             print("Horn Health:", gameInfo.hornHealth)
             print()
-            if gameInfo.hornHealth <= 0:
-                horn.ev3.speaker.play_file(SoundFile.GAME_OVER)
+            if (gameInfo.hornHealth <= 0):
+                horn.ev3.speaker.play_file("./sounds/gameOver.rsf")
                 while True:
                     horn.ev3.light.on(Color.RED)
                     wait(100)
