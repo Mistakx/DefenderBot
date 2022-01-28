@@ -21,7 +21,7 @@ def printEnemyTypeAndHealth(gameInfo, enemyArrayPosition):
         print("Enemy Type: " + enemy["type"] + " | " + "Enemy health: " + str(enemy["health"]))
 
 #* Horn goes backwards until it is in a position to attack with the crane, then keeps attacking until the enemy falls.
-def craneAttack(log, horn, calibration, gameInfo, enemyToAttack, followingMovementSpeed, distanceToStop):
+def craneAttack(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, followingMovementSpeed, distanceToStop):
 
     print("Starting attack - Crane.")
 
@@ -69,7 +69,7 @@ def craneAttack(log, horn, calibration, gameInfo, enemyToAttack, followingMoveme
             horn.craneMotor.run(-200)
             while True:
 
-                currentEnemy = gameInfo.enemySlots[enemyToAttack]
+                currentEnemy = gameInfo.enemySlots[enemyToAttackArrayPosition]
 
                 distanceToBottle = horn.distanceSensor.distance()
                 if log:
@@ -84,7 +84,7 @@ def craneAttack(log, horn, calibration, gameInfo, enemyToAttack, followingMoveme
                         horn.ev3.speaker.play_file(SoundFile.GENERAL_ALERT)
                         gameInfo.enemySlots[enemyToAttackArrayPosition] = "Dead"
 
-                    printEnemyTypeAndHealth(gameInfo, enemyToAttack)
+                    printEnemyTypeAndHealth(gameInfo, enemyToAttackArrayPosition)
                     print("Crane attack used. New energy: " + str(gameInfo.hornEnergy))
                     print()
                     return

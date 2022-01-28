@@ -39,13 +39,15 @@ class Calibration:
     negativeTurnCalibration = 1.1
     followingMovementSpeed = 100
 
-class Game: 
+class Game:
+    currentTurn = 4
     currentPosition = 0 # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    enemySlots = ["","","","","",""]
-    # enemySlots = [{'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, 'No bottle', 'No bottle', 'No bottle', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
+    # enemySlots = ["","","","","",""]
+    enemySlots = ['Dead', {'n_attacks': 1, 'health': 50, 'type': 'Infantry'}, 'Dead', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}, {'n_attacks': 2, 'health': 200, 'type': 'Tank'}, "Dead"]
     # enemySlots = ["Dead","","Dead","","Dead",""]
+    
     
 
 calibrationInstance = Calibration()
