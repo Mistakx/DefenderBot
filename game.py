@@ -89,7 +89,7 @@ def recognizeBoard(horn, calibration, gameInfo):
         if ( (currentEnemy == "") or (currentEnemy == "No bottle") ): # Only recognize valid slots
            
             print("Slot "+ str(i+1) + " needs to be recognized.\n")
-            movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+            movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
             # horn.ev3.speaker.beep()
             
             movement.setItselfAndRotate(horn, calibration)
@@ -146,6 +146,92 @@ def attackEnemies(horn, calibration, gameInfo):
         elif gameInfo.hornEnergy < 500:
             print("Horn is skipping it's turn to regain energy.\n")
             return True
+
+    # If 4 enemies were killed or are out of attacks, crane attack the enemy on the board with more health
+    def fourEnemiesKilled(horn, calibration, gameInfo):
+
+
+        # Counts the number of dead enemies
+        numberOfDeadEnemies = 0
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if (currentEnemy == "Dead"):
+                numberOfDeadEnemies += 1
+            i += 1
+
+
+        # Counts the number of enemies out of attacks
+        numberOfEnemiesOutOfAttacks = 0
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if ( (currentEnemy != "Dead") and (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy["n_attacks"] == 0) ):
+                numberOfEnemiesOutOfAttacks += 1
+            i += 1
+
+
+        # Counts the number of enemies that are attacking next turn
+        numberOfEnemiesAttackingNextTurn = 0
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if (enemyIsAttackingNextTurn(gameInfo, i)):
+                numberOfEnemiesAttackingNextTurn += 1
+            i += 1
+
+
+        #! If 4 enemies were killed or are out of attacks, crane attack the enemy on the board with more health if the board doesn't have two enemies with 50 health
+        if ( ((numberOfDeadEnemies + numberOfEnemiesOutOfAttacks) >= 4) and (numberOfEnemiesAttackingNextTurn >= 1) ):
+
+            print("There are 4 dead or out of attack enemies. Checking if a crane attack is viable.")
+
+            # Counts the number of enemies alive that have 50 health
+            numberOfEnemiesAttackingNextTurnWith50Health = 0
+            i = 0
+            while (i < 6):
+                currentEnemy = gameInfo.enemySlots[i]
+                if (enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["health"] == 50)):
+                    numberOfEnemiesAttackingNextTurnWith50Health += 1
+                i += 1
+
+            #! If two enemies are attacking next turn and both have 50 life, Horn doesn't use the crane attack
+            #! Using the crane attack in this situation would leave one of the enemies alive
+            if (numberOfEnemiesAttackingNextTurnWith50Health == 2):
+                print("There are 2 remaining enemies alive, but both have 50 health. Not using crane attack.")
+                return
+
+            i = 0
+            tempEnemyHealth = 0
+            tempEnemyArrayPosition = 0
+            
+            # Changes temp variables to the variables corresponding to the enemy attacking next turn with more health
+            while (i < 6):
+
+                currentEnemy = gameInfo.enemySlots[i]
+
+                if ( enemyIsAttackingNextTurn(gameInfo, i) and currentEnemy["health"] > tempEnemyHealth):
+                    tempEnemyHealth = currentEnemy["health"]
+                    tempEnemyArrayPosition = i
+
+                i += 1
+
+            print("Crane attacking remaining slot " + str(tempEnemyArrayPosition + 1) + ".\n")
+
+            movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, tempEnemyArrayPosition + 1)
+            # horn.ev3.speaker.beep()
+            
+            movement.setItselfAndRotate(horn, calibration)
+            
+            #* Horn follows the enemy line until the bottle
+            movement.followEnemyLineUntilBottle(False, False, horn, calibration, calibration.followingMovementSpeed)
+            attack.craneAttack(False, horn, calibration, gameInfo, tempEnemyArrayPosition, calibration.followingMovementSpeed, 150)
+            horn.ev3.speaker.beep()
+        
+            movement.goBackwardsAndRotate(horn, calibration)
+            gameInfo.currentPosition = tempEnemyArrayPosition + 1
+            
+            return
 
     # If there are artilleries, sound attack them, and use the remaining energy to sound attack the remaining enemies
     def attackArtilleriesAndRemaining(horn, calibration, gameInfo):
@@ -227,7 +313,7 @@ def attackEnemies(horn, calibration, gameInfo):
             #! Sound attack the queued enemies
             for slotToAttack in slotsToSoundAttack:
                 
-                movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, slotToAttack)
+                movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, slotToAttack)
                 # horn.ev3.speaker.beep()
                 
                 movement.setItselfAndRotate(horn, calibration)
@@ -239,90 +325,6 @@ def attackEnemies(horn, calibration, gameInfo):
             
                 movement.goBackwardsAndRotate(horn, calibration)
                 gameInfo.currentPosition = slotToAttack
-
-    # If 4 enemies were killed or are out of attacks, crane attack the enemy on the board with more health
-    def craneAttack(horn, calibration, gameInfo):
-
-
-        #! Counts the number of dead enemies
-        numberOfDeadEnemies = 0
-        i = 0
-        while (i < 6):
-            currentEnemy = gameInfo.enemySlots[i]
-            if (currentEnemy == "Dead"):
-                numberOfDeadEnemies += 1
-            i += 1
-
-
-        #! Counts the number of enemies out of attacks
-        numberOfEnemiesOutOfAttacks = 0
-        i = 0
-        while (i < 6):
-            currentEnemy = gameInfo.enemySlots[i]
-            if ( (currentEnemy != "Dead") and (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy["n_attacks"] == 0) ):
-                numberOfEnemiesOutOfAttacks += 1
-            i += 1
-
-
-        #! Counts the number of enemies that are attacking next turn
-        numberOfEnemiesAttackingNextTurn = 0
-        i = 0
-        while (i < 6):
-            currentEnemy = gameInfo.enemySlots[i]
-            if (enemyIsAttackingNextTurn(gameInfo, i)):
-                numberOfEnemiesAttackingNextTurn += 1
-            i += 1
-
-
-        #! If 4 enemies were killed or are out of attacks, crane attack the enemy on the board with more health
-        if ( ((numberOfDeadEnemies + numberOfEnemiesOutOfAttacks) >= 4) and (numberOfEnemiesAttackingNextTurn >= 1) ):
-
-            print("There are 4 dead or out of attack enemies.")
-
-            #* Counts the number of enemies alive that have 50 health
-            numberOfEnemiesAttackingNextTurnWith50Health = 0
-            i = 0
-            while (i < 6):
-                currentEnemy = gameInfo.enemySlots[i]
-                if (enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["health"] == 50)):
-                    numberOfEnemiesAttackingNextTurnWith50Health += 1
-                i += 1
-
-            #! If two enemies are attacking next turn and both have 50 life, Horn doesn't use the crane attack
-            #! Using the crane attack in this situation would leave one of the enemies alive
-            if (numberOfEnemiesAttackingNextTurnWith50Health == 2):
-                print("There are 2 remaining enemies alive, but both have 50 health. Not using crane attack.")
-                return
-
-            i = 0
-            tempEnemyHealth = 0
-            tempEnemyArrayPosition = 0
-            
-            # Changes temp variables to the variables corresponding to the enemy attacking next turn with more health
-            while (i < 6):
-
-                currentEnemy = gameInfo.enemySlots[i]
-
-                if ( enemyIsAttackingNextTurn(gameInfo, i) and currentEnemy["health"] > tempEnemyHealth):
-                    tempEnemyHealth = currentEnemy["health"]
-                    tempEnemyArrayPosition = i
-
-                i += 1
-
-            print("Crane attacking remaining slot " + str(tempEnemyArrayPosition + 1) + ".\n")
-
-            movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, tempEnemyArrayPosition + 1)
-            # horn.ev3.speaker.beep()
-            
-            movement.setItselfAndRotate(horn, calibration)
-            
-            #* Horn follows the enemy line until the bottle
-            movement.followEnemyLineUntilBottle(False, False, horn, calibration, calibration.followingMovementSpeed)
-            attack.craneAttack(False, horn, calibration, gameInfo, tempEnemyArrayPosition, calibration.followingMovementSpeed, 150)
-            horn.ev3.speaker.beep()
-        
-            movement.goBackwardsAndRotate(horn, calibration)
-            gameInfo.currentPosition = tempEnemyArrayPosition + 1
 
     # If there are 2 or more enemies, sound attack them until energy reaches 350
     def attackTwoOrMoreEnemies(horn, calibration, gameInfo):
@@ -350,7 +352,7 @@ def attackEnemies(horn, calibration, gameInfo):
 
                     if ( enemyIsAttackingNextTurn(gameInfo, i) ):
         
-                        movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+                        movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
                         # horn.ev3.speaker.beep()
                         
                         movement.setItselfAndRotate(horn, calibration)
@@ -382,15 +384,16 @@ def attackEnemies(horn, calibration, gameInfo):
             print("There is only 1 enemy.")
 
             # Attack one enemy with 100 or more health
+            i = 0
             while (i < 6):
 
                 currentEnemy = gameInfo.enemySlots[i]
 
                 if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["health"] >= 100) ):
-                    
+                    print("The enemy has 100 or more health.")
                     print("Headbutting slot " + str(i+1) + ".")
 
-                    movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+                    movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
                     # horn.ev3.speaker.beep()
                     
                     movement.setItselfAndRotate(horn, calibration)
@@ -408,15 +411,17 @@ def attackEnemies(horn, calibration, gameInfo):
                 i += 1
 
             # Attack one enemy with 50 health
+            i = 0
             while (i < 6):
 
                 currentEnemy = gameInfo.enemySlots[i]
 
                 if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["health"] == 50) ):
                     
+                    print("The enemy has 50 health.")
                     print("Sound attacking slot " + str(i+1) + ".")
 
-                    movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+                    movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
                     # horn.ev3.speaker.beep()
                     
                     movement.setItselfAndRotate(horn, calibration)
@@ -436,8 +441,8 @@ def attackEnemies(horn, calibration, gameInfo):
 
     if regainEnergyIfNecessary(gameInfo): return True
 
+    fourEnemiesKilled(horn, calibration, gameInfo)
     attackArtilleriesAndRemaining(horn, calibration, gameInfo)      
-    craneAttack(horn, calibration, gameInfo)
     attackTwoOrMoreEnemies(horn, calibration, gameInfo)
     attackOneEnemy(horn, calibration, gameInfo)
 
@@ -445,17 +450,17 @@ def attackEnemies(horn, calibration, gameInfo):
 #* Horn gets atacked by the enemies that can attack
 #* Horn goes to enemies not dead but out of attacks and says to the player
 def enemiesAttack(horn, calibration, gameInfo):
-    
-    i = 0
 
-    while (i < 6):
+    i = 6
+
+    while (i > 0):
 
         currentEnemy = gameInfo.enemySlots[i] 
 
         if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")): # Only get attacked by valid slots
            
             #* Horn goes to the enemy line that is going to attack
-            movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*2, i+1)
+            movement.goBackToEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
             # horn.ev3.speaker.beep()
 
             #* Horn gets attacked
@@ -495,7 +500,7 @@ def enemiesAttack(horn, calibration, gameInfo):
                     horn.ev3.light.on(Color.GREEN)
                     wait(100)
         
-        i = i + 1
+        i -= 1
 
     return
 
@@ -530,13 +535,13 @@ def playGame(horn, calibration, gameInfo):
 
         #! Horn attacks
         attackEnemies(horn, calibration, gameInfo)
-        movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
         # print(gameInfo.enemySlots)
         # print()
 
         #! Enemy attacks
         enemiesAttack(horn, calibration, gameInfo)
-        movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
         print(gameInfo.enemySlots)
         print()
 

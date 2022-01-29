@@ -255,30 +255,35 @@ def followEnemyLineBackUntilBlack(horn, calibration, followingMovementSpeed):
 
 #! Back to beginning
 
-def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed, gameInfo):
+def goBackToEnemyLine(log, horn, calibration, gameInfo, followingMovementSpeed, lineToGoTo):
 
-    enemyLinesPassed = 0
+    firstLine = True
     timer = StopWatch()
     timerLastEnemyLinePassed = "" 
 
     threshold = (calibration.mainLineReflection + calibration.boardReflection) / 2
-    # print("Threshold: ", threshold) # TODO: Log Parameter 
-
+    if log:
+        print("Threshold: ", threshold) 
+    
     while True:
 
         lineColor = horn.lineColorSensor.color()
-        # print("Line Color: ", lineColor) # TODO: Log Parameter
+        if log:
+            print("Line Color: ", lineColor) 
 
         lineReflection = horn.lineColorSensor.reflection()
-        # print("Line Sensor Reflection: ", lineReflection) # TODO: Log Parameter
+        if log:
+            print("Line Sensor Reflection: ", lineReflection) 
 
         # Calculate the deviation from the threshold.
         deviation = lineReflection - threshold 
-        # print("Deviation: ", deviation) # TODO: Log Parameter
+        if log:
+            print("Deviation: ", deviation) 
 
         # Calculate the turn rate.
         turnRate = -(calibration.proportionalGain * deviation)
-        # print("Turn Rate: " + str(turnRate) + "\n")# TODO: Log Parameter
+        if log:
+            print("Turn Rate: " + str(turnRate) + "\n")
 
         # Set the drive base speed and turn rate.
         horn.robot.drive(followingMovementSpeed, turnRate)
@@ -287,25 +292,24 @@ def goBackToFirstEnemyLine(horn, calibration, followingMovementSpeed, gameInfo):
         if (horn.lineColorSensor.color() == calibration.enemyLineColor):
 
             # The first instant the horn.robot passes the enemy line always counts
-            if enemyLinesPassed == 0:
+            if firstLine == True:
                 timerLastEnemyLinePassed = timer.time()
-                enemyLinesPassed += 1
+                gameInfo.currentPosition -= 1
                 horn.ev3.speaker.beep()
-                print("Going back, lines passed: ", enemyLinesPassed)
 
             # After that, the instant the horn.robot passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
             else:
                 if (timer.time() - timerLastEnemyLinePassed > 2000):
                     timerLastEnemyLinePassed = timer.time()
-                    enemyLinesPassed += 1
+                    gameInfo.currentPosition -= 1
                     horn.ev3.speaker.beep()
-                    print("Going back, lines passed: ", enemyLinesPassed)
 
-        # Horn stops when it reaches the final line (when it passes the same number of lines of its current position)
-        if enemyLinesPassed == gameInfo.currentPosition:
-            gameInfo.currentPosition = 0 
+            print("Following main line back, number of lines passed: ", gameInfo.currentPosition)
+
+
+        if gameInfo.currentPosition == lineToGoTo:
             horn.robot.stop()
-            print() # New line after the last going back print
+            print()
             return
 
 def goBackTime(horn, calibration, followingMovementSpeed, timeToFollow):
@@ -340,31 +344,39 @@ def goBackTime(horn, calibration, followingMovementSpeed, timeToFollow):
 
 #! Multiple movements
 
-#* Horn is pointing forward. Rotates, goes back to beginning, and rotates to point forward again.  
-def rotateAndGoToBeggining(horn, calibration, gameInfo):
-    
-    # print("End of the board reached, going back to the beginning.")
-    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 4000)
-    horn.ev3.speaker.beep()
-    horn.robot.turn(calibratedTurn(-170, calibration))
-    horn.ev3.speaker.beep()
-    goBackToFirstEnemyLine(horn, calibration, calibration.followingMovementSpeed*2, gameInfo)
-    # Doesn't need a beep because reaching the first enemy line in the last function beeps
+#* Horn walks backwards a little, and rotates to point forwards
+def walksBackwardsAndRotatesToPointForward(horn, calibration):
     goBackTime(horn, calibration, calibration.followingMovementSpeed, 4000)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(170, calibration))
 
+#* Horn walks forwards a little, and rotates to point backwards
+def walksForwardsAndRotatesToPointBackward(horn, calibration):
+    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 3000)
+    horn.ev3.speaker.beep()
+    horn.robot.turn(calibratedTurn(-170 * calibration.negativeTurnCalibration, calibration))
+
+#* Horn is pointing forward. Rotates, goes back to beginning, walks a little backwards, and rotates to point forward again.  
+def rotateAndGoToBeggining(horn, calibration, gameInfo):
+    
+    # print("End of the board reached, going back to the beginning.")
+    walksForwardsAndRotatesToPointBackward(horn, calibration)
+    horn.ev3.speaker.beep()
+    goBackToEnemyLine(horn, calibration, calibration.followingMovementSpeed*1.0, gameInfo, 1)
+    # Doesn't need a beep because reaching the first enemy line in the last function beeps
+    walksBackwardsAndRotatesToPointForward(horn, calibration)
+
 #* Horn is on the enemy line. Goes backwards until the black tape and rotates back to the main line.
 def goBackwardsAndRotate(horn, calibration):
-    horn.robot.straight(-200) # Doesn't stop after the straight, since it's going to keep going backwards anyways
+    horn.robot.straight(-400) # Doesn't stop after the straight, since it's going to keep going backwards anyways
     followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
     horn.ev3.speaker.beep()
-    horn.robot.turn(calibratedTurn(70 * calibration.negativeTurnCalibration, calibration))
+    horn.robot.turn(calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
     horn.ev3.speaker.beep()
     
 #* Horn crossed enemy line. Sets itself up by walking forward a little, and then rotates to the enemy line.
 def setItselfAndRotate(horn, calibration):
-    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2000)
+    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 1200)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(-130 * calibration.negativeTurnCalibration, calibration))
     horn.ev3.speaker.beep()

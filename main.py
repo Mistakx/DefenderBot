@@ -31,24 +31,21 @@ class Horn:
 class Calibration:
     mainLineReflection = 10 # Parameter used to walk the main line
     boardReflection = 35 # Parameter used to walk the main line (35)
-    boardBlue = 70 # Parameter used to walk the enemy line (65)
-    enemyLineBlue = 25 # Parameter used to walk the enemy line (25)
+    boardBlue = 50 # Parameter used to walk the enemy line (65)
+    enemyLineBlue = 30 # Parameter used to walk the enemy line (25)
     enemyLineColor= Color.RED
-    proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
-    turnCalibrationTo360 = 930
-    negativeTurnCalibration = 1.1
-    followingMovementSpeed = 100
+    proportionalGain = 5 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+    turnCalibrationTo360 = 1000
+    negativeTurnCalibration = 1
+    followingMovementSpeed = 150
 
 class Game:
-    currentTurn = 4
+    currentTurn = 0
     currentPosition = 0 # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    # enemySlots = ["","","","","",""]
-    enemySlots = ['Dead', {'n_attacks': 1, 'health': 50, 'type': 'Infantry'}, 'Dead', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}, {'n_attacks': 2, 'health': 200, 'type': 'Tank'}, "Dead"]
-    # enemySlots = ["Dead","","Dead","","Dead",""]
-    
-    
+    enemySlots = ["","","","","",""]
+    # enemySlots = ['Dead', {'n_attacks': 2, 'health': 50, 'type': 'Infantry'}, 'Dead', 'No bottle', 'No bottle', {'n_attacks': 0, 'health': 100, 'type': 'Tank'}]
 
 calibrationInstance = Calibration()
 horn = Horn()
@@ -57,7 +54,7 @@ horn.robot.settings(100, 1000, 100, 1000)
 
 
 #! Calibration
-# horn.robot.turn(900)
+# horn.robot.turn(-1000)
 #robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
 # calibration.printLineColorSensor(horn.lineColorSensor)
 # calibration.printEnemyColorSensor(horn.enemyColorSensor)
@@ -77,4 +74,5 @@ horn.robot.settings(100, 1000, 100, 1000)
 
 #! Play game
 game.playGame(horn, calibrationInstance, gameInfo)
+# movement.goBackToEnemyLine(False, horn, calibrationInstance, gameInfo, calibrationInstance.followingMovementSpeed*1.0, 3)
 

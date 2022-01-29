@@ -1,0 +1,11 @@
+"filename", "language", "Markdown", "Python", "comment", "blank", "total"
+"c:\Users\ade9\Desktop\DefenderBot\README.md", "Markdown", 1, 0, 0, 1, 2
+"c:\Users\ade9\Desktop\DefenderBot\aesthetics.py", "Python", 0, 23, 1, 7, 31
+"c:\Users\ade9\Desktop\DefenderBot\attack.py", "Python", 0, 105, 12, 50, 167
+"c:\Users\ade9\Desktop\DefenderBot\calibration.py", "Python", 0, 19, 12, 8, 39
+"c:\Users\ade9\Desktop\DefenderBot\color.py", "Python", 0, 35, 11, 13, 59
+"c:\Users\ade9\Desktop\DefenderBot\game.py", "Python", 0, 329, 100, 171, 600
+"c:\Users\ade9\Desktop\DefenderBot\main.py", "Python", 0, 44, 21, 16, 81
+"c:\Users\ade9\Desktop\DefenderBot\movement.py", "Python", 0, 178, 90, 102, 370
+"c:\Users\ade9\Desktop\DefenderBot\sound.py", "Python", 0, 17, 8, 8, 33
+"Total", "-", 1, 750, 255, 376, 1382
