@@ -72,7 +72,7 @@ def followMainLineUntilEnemyLine(log, horn, calibration, gameInfo, followingMove
                     gameInfo.currentPosition += 1
                     horn.ev3.speaker.beep()
 
-            print("Following main line, number of lines passed: ", gameInfo.currentPosition)
+            print("Following main line, line passed: ", gameInfo.currentPosition)
 
 
         if gameInfo.currentPosition == lineToGoTo:
@@ -158,16 +158,21 @@ def followEnemyLineUntilBottle(log, printEnemyInfo, horn, calibration, following
             horn.robot.stop()
             horn.ev3.speaker.beep()
             wait(1000) # Waits for the bottle to reset, in case the horn.robot hit it
-            enemy = color.identifyEnemy(horn.ev3, horn.enemyColorSensor)
+            enemy = color.identifyEnemy(printEnemyInfo, horn.ev3, horn.enemyColorSensor)
+
             print("Movement: Horn has reached a bottle.")
+
             try:
                 if printEnemyInfo:
                     print("Enemy type: ", enemy["type"])
                     print()
                 return enemy
+
             except:
+
                 if printEnemyInfo:
                     print("Movement: Enemy invalid.\n")
+                    
                 return enemy
 
         # If the bottle doesn't exist, more than 3 seconds have passed when the horn.robot reaches a black line
@@ -304,10 +309,11 @@ def goBackToEnemyLine(log, horn, calibration, gameInfo, followingMovementSpeed, 
                     gameInfo.currentPosition -= 1
                     horn.ev3.speaker.beep()
 
-            print("Following main line back, number of lines passed: ", gameInfo.currentPosition)
+            # If Horn is on slot 3 for example, passing 1 line backwards doesn't leave it on the 2nd line, but on the 3rd.
+            print("Following main line back, line passed: ", gameInfo.currentPosition + 1)
 
 
-        if gameInfo.currentPosition == lineToGoTo:
+        if (gameInfo.currentPosition + 1 == lineToGoTo):
             horn.robot.stop()
             print()
             return
@@ -346,7 +352,7 @@ def goBackTime(horn, calibration, followingMovementSpeed, timeToFollow):
 
 #* Horn walks backwards a little, and rotates to point forwards
 def walksBackwardsAndRotatesToPointForward(horn, calibration):
-    goBackTime(horn, calibration, calibration.followingMovementSpeed, 4000)
+    goBackTime(horn, calibration, calibration.followingMovementSpeed, 3000)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(170, calibration))
 
@@ -362,7 +368,7 @@ def rotateAndGoToBeggining(horn, calibration, gameInfo):
     # print("End of the board reached, going back to the beginning.")
     walksForwardsAndRotatesToPointBackward(horn, calibration)
     horn.ev3.speaker.beep()
-    goBackToEnemyLine(horn, calibration, calibration.followingMovementSpeed*1.0, gameInfo, 1)
+    goBackToEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, 1)
     # Doesn't need a beep because reaching the first enemy line in the last function beeps
     walksBackwardsAndRotatesToPointForward(horn, calibration)
 
@@ -371,12 +377,12 @@ def goBackwardsAndRotate(horn, calibration):
     horn.robot.straight(-400) # Doesn't stop after the straight, since it's going to keep going backwards anyways
     followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
     horn.ev3.speaker.beep()
-    horn.robot.turn(calibratedTurn(80 * calibration.negativeTurnCalibration, calibration))
+    horn.robot.turn(calibratedTurn(90 * calibration.negativeTurnCalibration, calibration))
     horn.ev3.speaker.beep()
     
 #* Horn crossed enemy line. Sets itself up by walking forward a little, and then rotates to the enemy line.
 def setItselfAndRotate(horn, calibration):
     followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 1200)
     horn.ev3.speaker.beep()
-    horn.robot.turn(calibratedTurn(-130 * calibration.negativeTurnCalibration, calibration))
+    horn.robot.turn(calibratedTurn(-120 * calibration.negativeTurnCalibration, calibration))
     horn.ev3.speaker.beep()

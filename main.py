@@ -34,7 +34,7 @@ class Calibration:
     boardBlue = 50 # Parameter used to walk the enemy line (65)
     enemyLineBlue = 30 # Parameter used to walk the enemy line (25)
     enemyLineColor= Color.RED
-    proportionalGain = 5 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+    proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
     turnCalibrationTo360 = 1000
     negativeTurnCalibration = 1
     followingMovementSpeed = 150
@@ -44,8 +44,8 @@ class Game:
     currentPosition = 0 # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    enemySlots = ["","","","","",""]
-    # enemySlots = ['Dead', {'n_attacks': 2, 'health': 50, 'type': 'Infantry'}, 'Dead', 'No bottle', 'No bottle', {'n_attacks': 0, 'health': 100, 'type': 'Tank'}]
+    # enemySlots = ["","","","","",""]
+    enemySlots = [{'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, 'No bottle', 'No bottle', 'No bottle', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
 
 calibrationInstance = Calibration()
 horn = Horn()
@@ -75,4 +75,3 @@ horn.robot.settings(100, 1000, 100, 1000)
 #! Play game
 game.playGame(horn, calibrationInstance, gameInfo)
 # movement.goBackToEnemyLine(False, horn, calibrationInstance, gameInfo, calibrationInstance.followingMovementSpeed*1.0, 3)
-

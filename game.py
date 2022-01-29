@@ -150,7 +150,6 @@ def attackEnemies(horn, calibration, gameInfo):
     # If 4 enemies were killed or are out of attacks, crane attack the enemy on the board with more health
     def fourEnemiesKilled(horn, calibration, gameInfo):
 
-
         # Counts the number of dead enemies
         numberOfDeadEnemies = 0
         i = 0
@@ -259,7 +258,7 @@ def attackEnemies(horn, calibration, gameInfo):
 
 
         #! There are artilleries to attack this turn
-        if (numberOfArtilleriesReady >= 1):
+        if ( (numberOfArtilleriesReady >= 1) and (gameInfo.hornEnergy == 500) ):
 
             print("There are artilleries to attack.")
 
@@ -338,7 +337,7 @@ def attackEnemies(horn, calibration, gameInfo):
                 numberOfEnemies += 1
             i += 1
 
-        if (numberOfEnemies >= 2):
+        if (numberOfEnemies >= 2) and (gameInfo.hornEnergy == 500):
 
             print("There are 2 or more enemies to attack.")
 
@@ -379,7 +378,7 @@ def attackEnemies(horn, calibration, gameInfo):
                 numberOfEnemies += 1
             i += 1
 
-        if (numberOfEnemies == 1):
+        if ( (numberOfEnemies == 1) and (gameInfo.hornEnergy == 500) ):
 
             print("There is only 1 enemy.")
 
@@ -441,7 +440,11 @@ def attackEnemies(horn, calibration, gameInfo):
 
     if regainEnergyIfNecessary(gameInfo): return True
 
-    fourEnemiesKilled(horn, calibration, gameInfo)
+    alreadyAttacked = False
+
+    if fourEnemiesKilled(horn, calibration, gameInfo):
+        alreadyAttacked = True
+    
     attackArtilleriesAndRemaining(horn, calibration, gameInfo)      
     attackTwoOrMoreEnemies(horn, calibration, gameInfo)
     attackOneEnemy(horn, calibration, gameInfo)
@@ -451,7 +454,7 @@ def attackEnemies(horn, calibration, gameInfo):
 #* Horn goes to enemies not dead but out of attacks and says to the player
 def enemiesAttack(horn, calibration, gameInfo):
 
-    i = 6
+    i = 5
 
     while (i > 0):
 
@@ -524,16 +527,16 @@ def playGame(horn, calibration, gameInfo):
                 boardNeedsRecognition = True
             i = i + 1
 
-        if boardNeedsRecognition:
-            print("Board needs recognition.")
-            recognizeBoard(horn, calibration, gameInfo)
-            print(gameInfo.enemySlots)
-            print()
-            movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
-        else:
-            print("Board doesn't need recognition.")
+        # if boardNeedsRecognition:
+        #     print("Board needs recognition.")
+        #     recognizeBoard(horn, calibration, gameInfo)
+        #     print(gameInfo.enemySlots)
+        #     print()
+        #     movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        # else:
+        #     print("Board doesn't need recognition.")
 
-        #! Horn attacks
+        # #! Horn attacks
         attackEnemies(horn, calibration, gameInfo)
         movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
         # print(gameInfo.enemySlots)
@@ -547,3 +550,4 @@ def playGame(horn, calibration, gameInfo):
 
     while True:
         horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
+

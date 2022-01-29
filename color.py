@@ -4,12 +4,14 @@ from pybricks.parameters import Button, Color, ImageFile, Port, SoundFile
 from pybricks.tools import wait
 
 
-def identifyEnemy(ev3, enemyColorSensor):
+def identifyEnemy(printEnemyInfo, ev3, enemyColorSensor):
 
     # TODO: Exception if the color isn't one of the correct ones.
 
     enemyColor = enemyColorSensor.color()
-    print("Color reached: ", enemyColor)
+    
+    if printEnemyInfo:
+        print("Color reached: ", enemyColor)
 
     if enemyColor == Color.BLUE: # Error
         #ev3.speaker.say('Blue')
