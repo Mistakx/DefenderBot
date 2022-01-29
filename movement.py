@@ -352,13 +352,13 @@ def goBackTime(horn, calibration, followingMovementSpeed, timeToFollow):
 
 #* Horn walks backwards a little, and rotates to point forwards
 def walksBackwardsAndRotatesToPointForward(horn, calibration):
-    goBackTime(horn, calibration, calibration.followingMovementSpeed, 3000)
+    goBackTime(horn, calibration, calibration.followingMovementSpeed, 2500)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(170, calibration))
 
 #* Horn walks forwards a little, and rotates to point backwards
 def walksForwardsAndRotatesToPointBackward(horn, calibration):
-    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 3000)
+    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2500)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(-170 * calibration.negativeTurnCalibration, calibration))
 

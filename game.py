@@ -544,6 +544,8 @@ def playGame(horn, calibration, gameInfo):
 
         #! Enemy attacks
         enemiesAttack(horn, calibration, gameInfo)
+        if gameInfo.currentPosition != 1: # If the last enemy that attacked wasn't on the first slot, walk to the beginning of the board
+            movement.goBackToEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
         movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
         print(gameInfo.enemySlots)
         print()
