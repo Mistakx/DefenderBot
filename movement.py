@@ -26,6 +26,10 @@ def calibratedTurn(turnAngle, calibration):
 
 def followMainLineUntilEnemyLine(log, horn, calibration, gameInfo, followingMovementSpeed, lineToGoTo):
 
+    if (gameInfo.currentPosition == lineToGoTo):
+        print("Horn already at position to go to.")
+        return
+
     firstLine = True
     timer = StopWatch()
     timerLastEnemyLinePassed = "" 
@@ -115,6 +119,10 @@ def followMainLineTime(horn, calibration, followingMovementSpeed, timeToFollow):
         #wait(1)
 
 def followMainLineBackUntilEnemyLine(log, horn, calibration, gameInfo, followingMovementSpeed, lineToGoTo):
+
+    if ( (gameInfo.currentPosition + 1) == lineToGoTo ):
+        print("Horn already at position to go back to.")
+        return
 
     firstLine = True
     timer = StopWatch()

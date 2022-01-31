@@ -440,11 +440,7 @@ def attackEnemies(horn, calibration, gameInfo):
 
     if regainEnergyIfNecessary(gameInfo): return True
 
-    alreadyAttacked = False
-
-    if fourEnemiesKilled(horn, calibration, gameInfo):
-        alreadyAttacked = True
-    
+    fourEnemiesKilled(horn, calibration, gameInfo) 
     attackArtilleriesAndRemaining(horn, calibration, gameInfo)      
     attackTwoOrMoreEnemies(horn, calibration, gameInfo)
     attackOneEnemy(horn, calibration, gameInfo)
@@ -533,7 +529,6 @@ def enemiesAttack(horn, calibration, gameInfo):
     return
 
 
-
 #! Horn plays the game
 def playGame(horn, calibration, gameInfo):
 
@@ -556,20 +551,35 @@ def playGame(horn, calibration, gameInfo):
                 boardNeedsRecognition = True
             i = i + 1
 
-        # if boardNeedsRecognition:
-        #     print("Board needs recognition.")
-        #     recognizeBoard(horn, calibration, gameInfo)
-        #     print(gameInfo.enemySlots)
-        #     print()
-        #     movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
-        # else:
-        #     print("Board doesn't need recognition.")
+        if boardNeedsRecognition:
+            print("Board needs recognition.")
+            recognizeBoard(horn, calibration, gameInfo)
+            print(gameInfo.enemySlots)
+            print()
+            movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        else:
+            print("Board doesn't need recognition.")
 
 
         # #! Horn attacks
-        attackEnemies(horn, calibration, gameInfo)
-        # print(gameInfo.enemySlots)
-        # print()
+        #* Finds if there are enemies to attack
+        thereAreEnemiesToAttack = False
+        i = 0
+        while (i < 6):
+
+            currentEnemy = gameInfo.enemySlots[i] 
+
+            if (enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition)):
+                thereAreEnemiesToAttack = True
+                break
+            
+            i += 1
+
+        if thereAreEnemiesToAttack:
+            print("There are enemies to attack.")
+            attackEnemies(horn, calibration, gameInfo)
+        else:
+            print("There are no enemies to attack.")
 
         #! Enemy attacks
         goToLastEnemyAlive(horn, calibration, gameInfo)
