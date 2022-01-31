@@ -47,8 +47,7 @@ class Game:
     enemySlots = ["","","","","",""]
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
-    # enemySlots = ['Dead', {'n_attacks': 2, 'health': 50, 'type': 'Infantry'}, 'Dead', 'No bottle', 'No bottle', {'n_attacks': 0, 'health': 100, 'type': 'Tank'}]
-
+    # enemySlots = ['Dead', 'Dead', 'Dead', 'Dead', {'n_attacks': 1, 'health': 200, 'type': 'Tank'}, {'n_attacks': 0, 'health': 100, 'type': 'Tank'}]
 calibrationInstance = Calibration()
 horn = Horn()
 gameInfo = Game()

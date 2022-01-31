@@ -365,13 +365,13 @@ def followEnemyLineBackUntilBlack(horn, calibration, followingMovementSpeed):
 
 #* Horn walks backwards a little, and rotates to point forwards
 def walksBackwardsAndRotatesToPointForward(horn, calibration):
-    followMainLineBackTime(horn, calibration, calibration.followingMovementSpeed, 2500)
+    followMainLineBackTime(horn, calibration, calibration.followingMovementSpeed, 2700)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(170, calibration))
 
 #* Horn walks forwards a little, and rotates to point backwards
 def walksForwardsAndRotatesToPointBackward(horn, calibration):
-    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2500)
+    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2200)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(-170 * calibration.negativeTurnCalibration, calibration))
 
@@ -387,7 +387,7 @@ def rotateAndGoToBeggining(horn, calibration, gameInfo):
 
 #* Horn is on the enemy line. Goes backwards until the black tape and rotates back to the main line.
 def goBackwardsAndRotate(horn, calibration):
-    horn.robot.straight(-400) # Doesn't stop after the straight, since it's going to keep going backwards anyways
+    horn.robot.straight(-350) # Doesn't stop after the straight, since it's going to keep going backwards anyways
     followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(90 * calibration.negativeTurnCalibration, calibration))

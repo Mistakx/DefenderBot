@@ -143,11 +143,11 @@ def attackEnemies(horn, calibration, gameInfo):
             print("Horn doesn't need to regain energy.\n")
             return False
 
-        elif ( (gameInfo.hornEnergy < 500) and (usingRemainingEnergy == True) ):
+        elif ( (gameInfo.hornEnergy < 500) and (gameInfo.usingRemainingEnergy == True) ):
             print("Horn is is using it's remaining energy to attack.\n")
             return False
 
-        elif ( (gameInfo.hornEnergy < 500) and (usingRemainingEnergy == False) ):
+        elif ( (gameInfo.hornEnergy < 500) and (usingRemainingEnergy.usingRemainingEnergy == False) ):
             print("Horn is skipping it's turn to regain energy.\n")
             return True
 
@@ -699,7 +699,8 @@ def enemiesAttack(horn, calibration, gameInfo):
             else:
                 horn.ev3.speaker.say("Enemy is out of attacks.")
 
-            horn.robot.straight(200) #* After being attacked, horn stops, letting the timeout of the follow main line function to count the same line twice. Horn walks forwards to avoid it.
+            #* After being attacked, horn stops, letting the timeout of the follow main line function to count the same line twice. Horn walks forwards to avoid it.
+            movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 200)
 
             print("Horn Health:", gameInfo.hornHealth)
             print()
