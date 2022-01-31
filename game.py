@@ -635,9 +635,9 @@ def attackEnemies(horn, calibration, gameInfo):
     while (i < 6):
         currentEnemy = gameInfo.enemySlots[i]
         if (currentEnemy == "Dead"):
-            numberOfDeadAndOutOfAttacksEnemies += 1
+            numberOfDeadOrOutOfAttacksEnemies += 1
         elif ( (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy["n_attacks"] == 0) ):
-            numberOfDeadAndOutOfAttacksEnemies += 1
+            numberOfDeadOrOutOfAttacksEnemies += 1
         
         i += 1
 
@@ -760,7 +760,7 @@ def playGame(horn, calibration, gameInfo):
             print()
             movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
         else:
-            print("Board doesn't need recognition.")
+            print("Board doesn't need recognition.\n")
 
 
         # #! Horn attacks
@@ -781,26 +781,34 @@ def playGame(horn, calibration, gameInfo):
             print("There are enemies to attack.")
             attackEnemies(horn, calibration, gameInfo)
         else:
-            print("There are no enemies to attack.")
-
-
-
-
-
-
-
-
-
+            print("There are no enemies to attack.\n")
 
 
         #! Enemy attacks
-        goToLastEnemyAlive(horn, calibration, gameInfo)
-        movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
-        enemiesAttack(horn, calibration, gameInfo)
-        movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
-        movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
-        print(gameInfo.enemySlots)
-        print()
+        thereAreEnemiesThatAttackHorn = False
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if enemyIsAttackingNextTurn(gameInfo, i):
+                thereAreEnemiesThatAttackHorn = True
+            i = i + 1
+
+        if thereAreEnemiesThatAttackHorn:
+            print("There are enemies that attack Horn.\n")
+            goToLastEnemyAlive(horn, calibration, gameInfo)
+            movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
+            enemiesAttack(horn, calibration, gameInfo)
+            movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
+            movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
+            print(gameInfo.enemySlots)
+            print()
+
+        else:
+            print("There are no enemies that attack Horn.\n")
+
+
+
+
 
     while True:
         horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
