@@ -45,6 +45,8 @@ class Game:
     hornHealth = 750
     hornEnergy = 500
     enemySlots = ["","","","","",""]
+    usingRemainingEnergy = False
+    alreadyAttackedThisTurn = True
     # enemySlots = ['Dead', {'n_attacks': 2, 'health': 50, 'type': 'Infantry'}, 'Dead', 'No bottle', 'No bottle', {'n_attacks': 0, 'health': 100, 'type': 'Tank'}]
 
 calibrationInstance = Calibration()
