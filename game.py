@@ -641,7 +641,7 @@ def attackEnemies(horn, calibration, gameInfo):
         
         i += 1
 
-    if (numberOfDeadOrOutOfAttacksEnemies == 0):
+    if (numberOfDeadOrOutOfAttacksEnemies == 6):
         while True:
             horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
 
