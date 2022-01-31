@@ -629,6 +629,22 @@ def attackEnemies(horn, calibration, gameInfo):
     if (gameInfo.alreadyAttackedThisTurn == False):
         attackOneEnemy(horn, calibration, gameInfo)
 
+    #! Counts the number of enemies dead or out of attacks
+    numberOfDeadOrOutOfAttacksEnemies = 0
+    i = 0
+    while (i < 6):
+        currentEnemy = gameInfo.enemySlots[i]
+        if (currentEnemy == "Dead"):
+            numberOfDeadAndOutOfAttacksEnemies += 1
+        elif ( (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy["n_attacks"] == 0) ):
+            numberOfDeadAndOutOfAttacksEnemies += 1
+        
+        i += 1
+
+    if (numberOfDeadOrOutOfAttacksEnemies == 0):
+        while True:
+            horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
+
 #* Horn goes to the last enemy alive, with our without attacks, if it hasn't passed it yet
 def goToLastEnemyAlive(horn, calibration, gameInfo):
 
@@ -651,7 +667,6 @@ def goToLastEnemyAlive(horn, calibration, gameInfo):
 
     else:
         print("There isn't any enemy alive for Horn to be attacked.\n")
-
 
 #* Horn skips dead enemies and slots with no bottles
 #* Horn gets atacked by the enemies that can attack
@@ -715,7 +730,6 @@ def enemiesAttack(horn, calibration, gameInfo):
         i -= 1
 
     return
-
 
 #! Horn plays the game
 def playGame(horn, calibration, gameInfo):
