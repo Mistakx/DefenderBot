@@ -445,7 +445,7 @@ def attackEnemies(horn, calibration, gameInfo):
     attackTwoOrMoreEnemies(horn, calibration, gameInfo)
     attackOneEnemy(horn, calibration, gameInfo)
 
-#* Horn goes to the last enemy alive, with our without attacks
+#* Horn goes to the last enemy alive, with our without attacks, if it hasn't passed it yet
 def goToLastEnemyAlive(horn, calibration, gameInfo):
 
     lastEnemyAliveArrayPosition = None
@@ -471,7 +471,7 @@ def goToLastEnemyAlive(horn, calibration, gameInfo):
 
 #* Horn skips dead enemies and slots with no bottles
 #* Horn gets atacked by the enemies that can attack
-#* Horn goes to enemies not dead but out of attacks and says to the player
+#* Horn goes to enemies not dead but out of attacks, and says to the player that they have no attacks
 def enemiesAttack(horn, calibration, gameInfo):
 
     i = 5
@@ -569,7 +569,7 @@ def playGame(horn, calibration, gameInfo):
 
             currentEnemy = gameInfo.enemySlots[i] 
 
-            if (enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition)):
+            if (enemyIsAttackingNextTurn(gameInfo, i)):
                 thereAreEnemiesToAttack = True
                 break
             
@@ -581,12 +581,21 @@ def playGame(horn, calibration, gameInfo):
         else:
             print("There are no enemies to attack.")
 
+
+
+
+
+
+
+
+
+
+
         #! Enemy attacks
         goToLastEnemyAlive(horn, calibration, gameInfo)
         movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
         enemiesAttack(horn, calibration, gameInfo)
-        if ( (gameInfo.currentPosition + 1) != 1): # If the last enemy that attacked wasn't on the first slot, walk to the beginning of the board
-            movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
+        movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
         movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
         print(gameInfo.enemySlots)
         print()

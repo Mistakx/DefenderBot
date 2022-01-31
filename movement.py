@@ -26,13 +26,16 @@ def calibratedTurn(turnAngle, calibration):
 
 def followMainLineUntilEnemyLine(log, horn, calibration, gameInfo, followingMovementSpeed, lineToGoTo):
 
-    if (gameInfo.currentPosition == lineToGoTo):
+    if (gameInfo.currentPosition == lineToGoTo): # Horn already at position to go to.
         print("Horn already at position to go to.")
         return
 
-    firstLine = True
+    elif (gameInfo.currentPosition > lineToGoTo): # Horn already past position to go to.
+        print("Horn already past position to go to.")
+        return
+
     timer = StopWatch()
-    timerLastEnemyLinePassed = "" 
+    timerLastEnemyLinePassed = None 
 
     threshold = (calibration.mainLineReflection + calibration.boardReflection) / 2
     if log:
@@ -61,16 +64,16 @@ def followMainLineUntilEnemyLine(log, horn, calibration, gameInfo, followingMove
         # Set the drive base speed and turn rate.
         horn.robot.drive(followingMovementSpeed, turnRate)
 
-        #* When the horn.robot reaches the enemy line
+        #* When the Horn reaches the enemy line
         if (horn.lineColorSensor.color() == calibration.enemyLineColor):
 
-            # The first instant the horn.robot passes the enemy line always counts
-            if firstLine == True:
+            # The first instant the Horn passes the enemy line always counts
+            if (timerLastEnemyLinePassed == None):
                 timerLastEnemyLinePassed = timer.time()
                 gameInfo.currentPosition += 1
-                horn.ev3.speaker.beep()
+                horn.ev3.speaker.beep()                
 
-            # After that, the instant the horn.robot passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
+            # After that, the instant the Horn passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
             else:
                 if (timer.time() - timerLastEnemyLinePassed > 2000):
                     timerLastEnemyLinePassed = timer.time()
@@ -119,14 +122,19 @@ def followMainLineTime(horn, calibration, followingMovementSpeed, timeToFollow):
         #wait(1)
 
 def followMainLineBackUntilEnemyLine(log, horn, calibration, gameInfo, followingMovementSpeed, lineToGoTo):
-
+    
+    # Horn already at position to go back to.
     if ( (gameInfo.currentPosition + 1) == lineToGoTo ):
         print("Horn already at position to go back to.")
         return
 
-    firstLine = True
+    # Horn already passed position to go back to.
+    elif ( (gameInfo.currentPosition + 1) < lineToGoTo ):
+        print("Horn already passed position to go back to.")
+        return
+
     timer = StopWatch()
-    timerLastEnemyLinePassed = "" 
+    timerLastEnemyLinePassed = None
 
     threshold = (calibration.mainLineReflection + calibration.boardReflection) / 2
     if log:
@@ -155,16 +163,16 @@ def followMainLineBackUntilEnemyLine(log, horn, calibration, gameInfo, following
         # Set the drive base speed and turn rate.
         horn.robot.drive(followingMovementSpeed, turnRate)
 
-        #* When the horn.robot reaches the enemy line
+        #* When the Horn reaches the enemy line
         if (horn.lineColorSensor.color() == calibration.enemyLineColor):
 
-            # The first instant the horn.robot passes the enemy line always counts
-            if firstLine == True:
+            # The first instant the Horn passes the enemy line always counts
+            if (timerLastEnemyLinePassed == None):
                 timerLastEnemyLinePassed = timer.time()
                 gameInfo.currentPosition -= 1
                 horn.ev3.speaker.beep()
 
-            # After that, the instant the horn.robot passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
+            # After that, the instant the Horn passes the enemy line counts if more than two seconds have passed, to avoid duplicate readings
             else:
                 if (timer.time() - timerLastEnemyLinePassed > 2000):
                     timerLastEnemyLinePassed = timer.time()

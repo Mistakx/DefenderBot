@@ -31,10 +31,10 @@ class Horn:
 class Calibration:
     mainLineReflection = 10 # Parameter used to walk the main line
     boardReflection = 35 # Parameter used to walk the main line (35)
-    boardBlue = 70 # Parameter used to walk the enemy line (65)
-    enemyLineBlue = 40 # Parameter used to walk the enemy line (25)
+    boardBlue = 62 # Parameter used to walk the enemy line (65)
+    enemyLineBlue = 36 # Parameter used to walk the enemy line (25)
     enemyLineColor= Color.RED
-    proportionalGain = 4 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
+    proportionalGain = 4.5 # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
     turnCalibrationTo360 = 1000
     negativeTurnCalibration = 1
     followingMovementSpeed = 150
