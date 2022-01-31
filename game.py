@@ -418,7 +418,7 @@ def attackEnemies(horn, calibration, gameInfo):
                 if ( enemyIsAttackingNextTurn(gameInfo, i) and (currentEnemy["health"] == 50) ):
                     
                     print("The enemy has 50 health.")
-                    print("Sound attacking slot " + str(i+1) + ".")
+                    print("Sound attacking slot " + str(i+1) + ".\n")
 
                     movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
                     # horn.ev3.speaker.beep()
@@ -449,6 +449,30 @@ def attackEnemies(horn, calibration, gameInfo):
     attackTwoOrMoreEnemies(horn, calibration, gameInfo)
     attackOneEnemy(horn, calibration, gameInfo)
 
+#* Horn goes to the last enemy alive, with our without attacks
+def goToLastEnemyAlive(horn, calibration, gameInfo):
+
+    lastEnemyAliveArrayPosition = None
+    i = 0
+    #! Finds the last enemy alive array position
+    while (i < 6):
+
+        currentEnemy = gameInfo.enemySlots[i] 
+
+        if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")): # Only get attacked by valid slots
+            lastEnemyAliveArrayPosition = i
+        
+        i += 1
+
+    if (lastEnemyAliveArrayPosition != None):
+        print("There are enemies alive, with or without attacks.")
+        print("The last enemy alive is on slot: " + str(lastEnemyAliveArrayPosition+1) + ".\n")
+        movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, lastEnemyAliveArrayPosition+1)
+
+    else:
+        print("There isn't any enemy alive for Horn to be attacked.\n")
+
+
 #* Horn skips dead enemies and slots with no bottles
 #* Horn gets atacked by the enemies that can attack
 #* Horn goes to enemies not dead but out of attacks and says to the player
@@ -460,10 +484,11 @@ def enemiesAttack(horn, calibration, gameInfo):
 
         currentEnemy = gameInfo.enemySlots[i] 
 
-        if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")): # Only get attacked by valid slots
-           
+        # Horn goes to all alive enemies, with or without attacks left
+        if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")): 
+
             #* Horn goes to the enemy line that is going to attack
-            movement.goBackToEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
+            movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
             # horn.ev3.speaker.beep()
 
             #* Horn gets attacked
@@ -507,15 +532,19 @@ def enemiesAttack(horn, calibration, gameInfo):
 
     return
 
+
+
 #! Horn plays the game
 def playGame(horn, calibration, gameInfo):
 
     while gameIsStillOn(gameInfo):
 
+
         #! Energy regain
         regainEnergy(horn, gameInfo)
         print("Horn Health:", gameInfo.hornHealth)
         print()
+
 
         #! Board recognition
         #* If all enemies are enemies dead, scanned already, or a mixture of the two, then Horn doesn't need to recognize the board.
@@ -536,16 +565,18 @@ def playGame(horn, calibration, gameInfo):
         # else:
         #     print("Board doesn't need recognition.")
 
+
         # #! Horn attacks
         attackEnemies(horn, calibration, gameInfo)
-        movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
         # print(gameInfo.enemySlots)
         # print()
 
         #! Enemy attacks
+        goToLastEnemyAlive(horn, calibration, gameInfo)
+        movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
         enemiesAttack(horn, calibration, gameInfo)
-        if gameInfo.currentPosition != 1: # If the last enemy that attacked wasn't on the first slot, walk to the beginning of the board
-            movement.goBackToEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
+        if ( (gameInfo.currentPosition + 1) != 1): # If the last enemy that attacked wasn't on the first slot, walk to the beginning of the board
+            movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
         movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
         print(gameInfo.enemySlots)
         print()
