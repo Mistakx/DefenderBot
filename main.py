@@ -76,3 +76,6 @@ horn.robot.settings(100, 1000, 1000, 1000)
 
 #! Play game
 game.playGame(horn, calibrationInstance, gameInfo)
+
+# TODO: If there is only one enemy that can be left, scan it and immediately attack it.
+# TODO: Only go to a slot to tell the user it doesn't have any attacks left one single time
