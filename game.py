@@ -15,6 +15,8 @@ import calibration
 import movement
 
 
+#! Helper functions
+
 #* There is still an enemy attacking next turn
 def enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition):
     enemy = gameInfo.enemySlots[enemyArrayPosition]
@@ -24,16 +26,17 @@ def enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition):
 def alreadyWarnedArrayPosition(gameInfo, enemyArrayPosition):
 
     alreadyWarned = False
+    enemyArrayPositionsAlreadyWarned = gameInfo.enemyArrayPositionsAlreadyWarned
+    for enemyArrayPositionAlreadyWarned in gameInfo.enemyArrayPositionsAlreadyWarned:
 
-    for (enemyArrayPositionAlreadyWarned in gameInfo.enemyArrayPositionsAlreadyWarned):
-
-        if (enemyArrayPosition == enemyArrayPositionAlreadyWarned):
+        if (enemyArrayPositionAlreadyWarned == enemyArrayPosition):
             alreadyWarned = True
             break
     
     return alreadyWarned
 
 
+#! Game functions
 
 #* Checks if the game isn't over
 def gameIsStillOn(gameInfo):
@@ -127,7 +130,7 @@ def attackEnemies(horn, calibration, gameInfo):
     def regainEnergyIfNecessary(gameInfo):
         
         if (gameInfo.hornEnergy == 500):
-            print("Horn doesn't need to regain energy.\n")
+            print("Horn has maximum energy, doesn't need to regain it.\n")
             return False
 
         elif ( (gameInfo.hornEnergy < 500) and (gameInfo.usingRemainingEnergy == True) ):
@@ -390,7 +393,6 @@ def attackEnemies(horn, calibration, gameInfo):
                 movement.goBackwardsAndRotate(horn, calibration)
                 gameInfo.currentPosition = slotToAttack
 
-
     # If there are 2 or more enemies, sound attack them until energy reaches 350
     def attackTwoOrMoreEnemies(horn, calibration, gameInfo):
 
@@ -465,7 +467,6 @@ def attackEnemies(horn, calibration, gameInfo):
                         gameInfo.currentPosition = i + 1
 
                     i += 1      
-
 
     # Attack an enemy if non of the other conditions apply
     def attackOneEnemy(horn, calibration, gameInfo):
@@ -635,7 +636,7 @@ def attackEnemies(horn, calibration, gameInfo):
 #* Horn goes to the last enemy alive (with our without attacks), that hasn't warned the player that it is out of attacks, if it hasn't passed it yet
 def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):
 
-    lastEnemyAliveArrayPosition = None
+    lastEnemyAliveNotWarnedArrayPosition = None
     i = 0
     #! Finds the last enemy alive array position (with or without attacks), that hasn't warned the player that it is out of attacks
     while (i < 6):
@@ -644,23 +645,23 @@ def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):
 
         if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")):
 
-            if alreadyWarnedArrayPosition(gameInfo, i): 
-                lastEnemyAliveArrayPosition = i
+            if (alreadyWarnedArrayPosition(gameInfo, i) == False): 
+                lastEnemyAliveNotWarnedArrayPosition = i
 
         i += 1
 
-    if (lastEnemyAliveArrayPosition != None):
-        print("There are enemies alive, with or without attacks.")
-        print("The last enemy alive is on slot: " + str(lastEnemyAliveArrayPosition+1) + ".\n")
-        movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, lastEnemyAliveArrayPosition+1)
+    if (lastEnemyAliveNotWarnedArrayPosition != None):
+        print("There are enemies alive (with or without attacks) that haven't warned yet.")
+        print("The last enemy alive (with or without attacks) that hasn't warned is on slot: " + str(lastEnemyAliveNotWarnedArrayPosition+1) + ".\n")
+        movement.followMainLineUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, lastEnemyAliveNotWarnedArrayPosition+1)
 
     else:
-        print("There isn't any enemy alive for Horn to be attacked.\n")
+        print("There isn't any enemy that will attack or warn Horn.\n")
 
 #* Horn skips dead enemies and slots with no bottles
 #* Horn gets atacked by the enemies that can attack
 #* Horn goes to enemies not dead but out of attacks, and says to the player that they have no attacks
-def enemiesAttack(horn, calibration, gameInfo):
+def enemiesAttackAndWarn(horn, calibration, gameInfo):
 
     i = 5
 
@@ -689,12 +690,14 @@ def enemiesAttack(horn, calibration, gameInfo):
                         gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
                         currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
                         horn.ev3.speaker.play_file("./sounds/infantry.rsf")
+                        print("Horn was attacked by infantry.\n")
 
                     # Tank gives as much damage as its health
                     if (currentEnemy["type"] == "Tank"):
                         gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
                         currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
                         horn.ev3.speaker.play_file("./sounds/tank.rsf")
+                        print("Horn was attacked by tank.\n")
 
                     # If artillery attacks, it always gives 500 damage
                     elif currentEnemy["type"] == "Artillery":
@@ -702,6 +705,7 @@ def enemiesAttack(horn, calibration, gameInfo):
                         currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
                         horn.ev3.speaker.play_file(SoundFile.SONAR)
                         horn.ev3.speaker.play_file("./sounds/artillery.rsf")
+                        print("Horn was attacked by artillery.\n")
 
                 else:
                     horn.ev3.speaker.say("Enemy is out of attacks.")
@@ -726,7 +730,9 @@ def enemiesAttack(horn, calibration, gameInfo):
 
     return
 
+
 #! Horn plays the game
+
 def playGame(horn, calibration, gameInfo):
 
     while gameIsStillOn(gameInfo):
@@ -779,9 +785,11 @@ def playGame(horn, calibration, gameInfo):
             print("There are no enemies to attack.\n")
 
         #! Horn gets attacked
-        thereAreEnemiesThatAttackHorn = False
-        thereAreEnemiesAliveOutOfAttacks = False
+        print("DEBUG: START HORN GETTING ATTACKED")
 
+        #* Checks if there are enemies that will attack or warn Horn
+        thereAreEnemiesThatAttackHorn = False
+        thereAreEnemiesThatWarnHorn = False
         i = 0
         while (i < 6):
             
@@ -790,24 +798,32 @@ def playGame(horn, calibration, gameInfo):
             if enemyIsAttackingNextTurn(gameInfo, i): # Enemy is attacking horn next turn
                 thereAreEnemiesThatAttackHorn = True
 
-            elif ( (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy != "Dead") and (currentEnemy["n_attacks"] == 0) ): # Enemy is warning Horn next turn
-                thereAreEnemiesAliveOutOfAttacks = True
-
-            i = i + 1
+            elif ( (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy != "Dead") and (currentEnemy["n_attacks"] == 0) and (alreadyWarnedArrayPosition(gameInfo, i) == False) ): # Enemy is warning Horn next turn
+                thereAreEnemiesThatWarnHorn = True
 
 
-        # TODO: There are no enemies to attack Horn, but there are enemies out of attacks, it should go to the last alive to say it doesn't have attacks
-        if (thereAreEnemiesThatAttackHorn or thereAreEnemiesAliveOutOfAttacks):
-            print("There are enemies that attack Horn.\n")
+            i += 1
+
+
+        if (thereAreEnemiesThatAttackHorn or thereAreEnemiesThatWarnHorn):
+            print("There are enemies that attack or warn Horn this turn. Going to the last one.")
             goToLastEnemyAliveNotWarned(horn, calibration, gameInfo)
             movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
-            enemiesAttack(horn, calibration, gameInfo)
-            movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
-            movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
-            print(gameInfo.enemySlots)
-            print()
+            print("Enemies started attacking and warning.")
+            enemiesAttackAndWarn(horn, calibration, gameInfo)
+            print("Enemies finished attacking and warning.")
+
         else:
-            print("There are no enemies that attack Horn.\n")
+            print("There are no enemies that attack or warn Horn.\n")
+            movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
+
+        print("Trying to go back to beginning.\n")
+        movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
+        movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
+        print(gameInfo.enemySlots)
+        print()
+
+
 
     while True:
         horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)

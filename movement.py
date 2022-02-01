@@ -80,12 +80,12 @@ def followMainLineUntilEnemyLine(log, horn, calibration, gameInfo, followingMove
                     gameInfo.currentPosition += 1
                     horn.ev3.speaker.beep()
 
-            print("Following main line, line passed: ", gameInfo.currentPosition)
+            #? print("Following main line, line passed: ", gameInfo.currentPosition)
 
 
         if gameInfo.currentPosition == lineToGoTo:
             horn.robot.stop()
-            print()
+            #? print()
             return
 
 def followMainLineTime(horn, calibration, followingMovementSpeed, timeToFollow):
@@ -180,11 +180,11 @@ def followMainLineBackUntilEnemyLine(log, horn, calibration, gameInfo, following
                     horn.ev3.speaker.beep()
 
             # If Horn is on slot 3 for example, passing 1 line backwards doesn't leave it on the 2nd line, but on the 3rd.
-            print("Following main line back, line passed: ", gameInfo.currentPosition + 1)
+            #? print("Following main line back, line passed: ", gameInfo.currentPosition + 1)
 
         if (gameInfo.currentPosition + 1 == lineToGoTo):
             horn.robot.stop()
-            print()
+            #? print()
             return
 
 def followMainLineBackTime(horn, calibration, followingMovementSpeed, timeToFollow):

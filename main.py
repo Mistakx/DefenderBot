@@ -40,21 +40,21 @@ class Calibration:
     followingMovementSpeed = 150
 
 class Game:
-    currentTurn = 4
+    currentTurn = 0
     currentPosition = 0 # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
     # enemySlots = ["","","","","",""]
-    enemySlots = ['Dead', 'No bottle', 'Dead', 'Dead', 'Dead', 'Dead']
+    # enemySlots = ['Dead', 'No bottle', 'Dead', 'Dead', 'Dead', 'Dead']
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
     enemyArrayPositionsAlreadyWarned = [] # This array contains the enemySlots array positions of the enemies that have already warned they are ouf of attacks
-
+    enemySlots = ['Dead', {'n_attacks': 2, 'health': 50, 'type': 'Infantry'}, 'Dead', 'No bottle', 'Dead', {'n_attacks': 0, 'health': 100, 'type': 'Tank'}]
 
 calibrationInstance = Calibration()
 horn = Horn()
 gameInfo = Game()
-horn.robot.settings(100, 1000, 1000, 1000)
+horn.robot.settings(calibrationInstance.followingMovementSpeed, 1000, 1000, 1000)
 
 
 #! Calibration
@@ -80,5 +80,5 @@ horn.robot.settings(100, 1000, 1000, 1000)
 game.playGame(horn, calibrationInstance, gameInfo)
 
 # TODO: If there is only one enemy that can be left, scan it and immediately attack it.
-# TODO: Only go to a slot to tell the user it doesn't have any attacks left one single time
-# TODO: Horn wins at the exact same moment of the attack
+# TODO: Only go to a slot to tell the user it doesn't have any attacks left one single time.
+# TODO: Horn wins at the exact same moment of the attack.
