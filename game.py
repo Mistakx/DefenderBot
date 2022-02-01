@@ -170,7 +170,7 @@ def attackEnemies(horn, calibration, gameInfo):
             return False
 
         elif (gameInfo.hornEnergy < 500) and (
-            usingRemainingEnergy.usingRemainingEnergy == False
+            gameInfo.usingRemainingEnergy == False
         ):
             print("Horn is skipping it's turn to regain energy.\n")
             return True
