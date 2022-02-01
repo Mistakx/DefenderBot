@@ -1,8 +1,14 @@
 #!/usr/bin/env pybricks-micropython
 from threading import Thread
 
-from pybricks.ev3devices import (ColorSensor, GyroSensor, InfraredSensor,
-                                 Motor, TouchSensor, UltrasonicSensor)
+from pybricks.ev3devices import (
+    ColorSensor,
+    GyroSensor,
+    InfraredSensor,
+    Motor,
+    TouchSensor,
+    UltrasonicSensor,
+)
 from pybricks.hubs import EV3Brick
 from pybricks.media.ev3dev import ImageFile, SoundFile
 from pybricks.parameters import Button, Color, Direction, Port, Stop
@@ -18,10 +24,25 @@ def printEnemyTypeAndHealth(gameInfo, enemyArrayPosition):
         print("Enemy health (Dead): " + str(0))
 
     else:
-        print("Enemy Type: " + enemy["type"] + " | " + "Enemy health: " + str(enemy["health"]))
+        print(
+            "Enemy Type: "
+            + enemy["type"]
+            + " | "
+            + "Enemy health: "
+            + str(enemy["health"])
+        )
 
-#* Horn goes backwards until it is in a position to attack with the crane, then keeps attacking until the enemy falls.
-def craneAttack(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, followingMovementSpeed, distanceToStop):
+
+# * Horn goes backwards until it is in a position to attack with the crane, then keeps attacking until the enemy falls.
+def craneAttack(
+    log,
+    horn,
+    calibration,
+    gameInfo,
+    enemyToAttackArrayPosition,
+    followingMovementSpeed,
+    distanceToStop,
+):
 
     print("Starting attack - Crane.")
 
@@ -36,21 +57,21 @@ def craneAttack(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, fo
 
         lineColor = horn.lineColorSensor.color()
         if log:
-            print("Line Color: ", lineColor) 
+            print("Line Color: ", lineColor)
 
         lineReflection = horn.lineColorSensor.rgb()[2]
         if log:
-            print("Line Sensor Reflection: ", lineReflection) 
+            print("Line Sensor Reflection: ", lineReflection)
 
         # Calculate the deviation from the threshold.
-        deviation = lineReflection - threshold 
+        deviation = lineReflection - threshold
         if log:
             print("Deviation: ", deviation)
 
         # Calculate the turn rate.
         turnRate = calibration.proportionalGain * deviation
         if log:
-            print("Turn Rate: " + str(turnRate) + "\n") 
+            print("Turn Rate: " + str(turnRate) + "\n")
 
         # Set the drive base speed and turn rate.
         horn.robot.drive(-followingMovementSpeed, turnRate)
@@ -59,10 +80,10 @@ def craneAttack(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, fo
 
         # Stop if it reaches a bottle
         if log:
-            print("Distance To Bottle: ", distanceToBottle) 
+            print("Distance To Bottle: ", distanceToBottle)
 
-        if (distanceToBottle > distanceToStop): 
-            
+        if distanceToBottle > distanceToStop:
+
             horn.robot.stop()
 
             # Keep spinning until bottle gets hit
@@ -80,7 +101,7 @@ def craneAttack(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, fo
                     gameInfo.hornEnergy = gameInfo.hornEnergy - 300
                     currentEnemy["health"] = currentEnemy["health"] - 200
 
-                    if (currentEnemy["health"] <= 0):
+                    if currentEnemy["health"] <= 0:
                         horn.ev3.speaker.play_file(SoundFile.GENERAL_ALERT)
                         gameInfo.enemySlots[enemyToAttackArrayPosition] = "Dead"
 
@@ -89,8 +110,11 @@ def craneAttack(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, fo
                     print()
                     return
 
-#* Horn headbutts the bottle and goes backwards
-def headbutt(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, followingMovementSpeed)   :
+
+# * Horn headbutts the bottle and goes backwards
+def headbutt(
+    log, horn, calibration, gameInfo, enemyToAttackArrayPosition, followingMovementSpeed
+):
 
     print("Starting attack - Headbutt.")
 
@@ -105,32 +129,32 @@ def headbutt(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, follo
 
         lineColor = horn.lineColorSensor.color()
         if log:
-            print("Line Color: ", lineColor) 
+            print("Line Color: ", lineColor)
 
         lineReflection = horn.lineColorSensor.rgb()[2]
         if log:
-            print("Line Sensor Reflection: ", lineReflection) 
+            print("Line Sensor Reflection: ", lineReflection)
 
         # Calculate the deviation from the threshold.
-        deviation = lineReflection - threshold 
+        deviation = lineReflection - threshold
         if log:
             print("Deviation: ", deviation)
 
         # Calculate the turn rate.
         turnRate = calibration.proportionalGain * deviation
         if log:
-            print("Turn Rate: " + str(turnRate) + "\n") 
+            print("Turn Rate: " + str(turnRate) + "\n")
 
         # Set the drive base speed and turn rate.
         horn.robot.drive(followingMovementSpeed, turnRate)
 
         distanceToBottle = horn.distanceSensor.distance()
 
-        if (distanceToBottle > 400): # Stop if headbutts reaches a bottle 
-                    
+        if distanceToBottle > 400:  # Stop if headbutts reaches a bottle
+
             if log:
-                print("Distance To Bottle: ", distanceToBottle) 
-                
+                print("Distance To Bottle: ", distanceToBottle)
+
             enemyToAttack = gameInfo.enemySlots[enemyToAttackArrayPosition]
 
             horn.robot.stop()
@@ -144,10 +168,11 @@ def headbutt(log, horn, calibration, gameInfo, enemyToAttackArrayPosition, follo
             printEnemyTypeAndHealth(gameInfo, enemyToAttackArrayPosition)
 
             print("Headbutt attack used. New energy: " + str(gameInfo.hornEnergy))
-            print() 
+            print()
             return
-    
-#* Horn plays a sound effect
+
+
+# * Horn plays a sound effect
 def soundAttack(horn, gameInfo, enemyToAttackArrayPosition):
 
     print("Starting attack - Sound.")
@@ -157,6 +182,7 @@ def soundAttack(horn, gameInfo, enemyToAttackArrayPosition):
     horn.ev3.speaker.play_file("./sounds/soundAttack.rsf")
     gameInfo.hornEnergy = gameInfo.hornEnergy - 50
     enemyToAttack["health"] = enemyToAttack["health"] - 50
+
     if (enemyToAttack["health"]) <= 0:
         horn.ev3.speaker.play_file(SoundFile.GENERAL_ALERT)
         gameInfo.enemySlots[enemyToAttackArrayPosition] = "Dead"

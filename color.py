@@ -17,7 +17,7 @@ def identifyEnemy(printEnemyInfo, ev3, enemyColorSensor):
         #ev3.speaker.say('Blue')
         return "Error"
 
-    elif enemyColor == Color.GREEN: # Infantry
+    elif enemyColor == Color.GREEN or enemyColor == Color.WHITE: # Infantry
         #ev3.speaker.say('Green')
         infantry = {
             "type": "Infantry",
