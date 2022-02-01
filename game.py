@@ -895,8 +895,7 @@ def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):
 def enemiesAttackAndWarn(horn, calibration, gameInfo):
 
     i = 5
-    while (i >= 0):
-
+    while i >= 0:
 
         currentEnemy = gameInfo.enemySlots[i]
 
@@ -922,10 +921,10 @@ def enemiesAttackAndWarn(horn, calibration, gameInfo):
                     horn,
                     calibration,
                     gameInfo,
-                    calibration.followingMovementSpeed * 1.0,
+                    calibration.followingMovementSpeed * 2.0,
                     i + 1,
                 )
-                horn.ev3.speaker.beep()
+                # horn.ev3.speaker.beep()
 
                 # * Horn gets attacked
                 # TODO: Different sound for each enemy
@@ -1002,22 +1001,22 @@ def playGame(horn, calibration, gameInfo):
 
         #! Board recognition
         # * If all enemies are enemies dead, scanned already, or a mixture of the two, then Horn doesn't need to recognize the board.
-        # boardNeedsRecognition = False
-        # i = 0
-        # while (i < 6):
-        #     currentEnemy = gameInfo.enemySlots[i]
-        #     if ( (currentEnemy == "") or (currentEnemy == "No bottle") ):
-        #         boardNeedsRecognition = True
-        #     i = i + 1
+        boardNeedsRecognition = False
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if ( (currentEnemy == "") or (currentEnemy == "No bottle") ):
+                boardNeedsRecognition = True
+            i = i + 1
 
-        # if boardNeedsRecognition:
-        #     print("Board needs recognition.")
-        #     recognizeBoard(horn, calibration, gameInfo)
-        #     print(gameInfo.enemySlots)
-        #     print()
-        #     movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
-        # else:
-        #     print("Board doesn't need recognition.\n")
+        if boardNeedsRecognition:
+            print("Board needs recognition.")
+            recognizeBoard(horn, calibration, gameInfo)
+            print(gameInfo.enemySlots)
+            print()
+            movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        else:
+            print("Board doesn't need recognition.\n")
 
         #! Horn attacks
         # * Finds if there are enemies to attack
@@ -1065,7 +1064,7 @@ def playGame(horn, calibration, gameInfo):
 
             i += 1
 
-        if thereAreEnemiesThatAttackHorn or thereAreEnemiesThatWarnHorn:
+        if thereAreEnemiesThatAttackHorn or thereAreEnemiesThatWarnHorn: #! Horn goes to be warned or attacked
 
             print(
                 "There are enemies that attack or warn Horn this turn. Going to the last one."
@@ -1076,17 +1075,44 @@ def playGame(horn, calibration, gameInfo):
             enemiesAttackAndWarn(horn, calibration, gameInfo)
             print("Enemies finished attacking and warning.")
 
-        else:
-            print("There are no enemies that attack or warn Horn.\n")
-            movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
+            print(gameInfo.enemySlots)
+            print()
 
-        print("Trying to go back to beginning.\n")
-        movement.followMainLineBackUntilEnemyLine(
-            False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1
-        )
-        movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
-        print(gameInfo.enemySlots)
-        print()
+            print("Trying to go back to beginning.\n")
+            movement.followMainLineBackUntilEnemyLine(
+                False,
+                horn,
+                calibration,
+                gameInfo,
+                calibration.followingMovementSpeed*2.0,
+                1,
+            )
+            movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
+        else: #! Horn simply stays or returns to beginning
+
+
+            if gameInfo.currentPosition != 0: #! Horn isn't getting attacked or warned, but is already on a slot at the board
+                print("There are no enemies that attack or warn Horn.")
+                print("Horn isn't already at the beginning of the board.")
+                print("Trying to go back to beginning.")
+                movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
+
+                movement.followMainLineBackUntilEnemyLine(
+                    False,
+                    horn,
+                    calibration,
+                    gameInfo,
+                    calibration.followingMovementSpeed*2.0,
+                    1,
+                )
+
+                movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
+
+            elif gameInfo.currentPosition == 0: #! Horn isn't getting attacked or warned, and is at the beginning of the board
+                print("There are no enemies that attack or warn Horn.")
+                print("Horn is already at the beginning of the board.\n")
+                
+                
 
     while True:
         horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)

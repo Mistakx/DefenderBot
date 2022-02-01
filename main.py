@@ -52,15 +52,7 @@ class Game:
     currentPosition = 0  # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    # enemySlots = ["","","","","",""]
-    enemySlots = [
-        {"n_attacks": 3, "health": 100, "type": "Infantry"},
-        "No bottle",
-        "No bottle",
-        "No bottle",
-        {"strength": 500, "type": "Artillery", "health": 50, "n_attacks": 1},
-        "No bottle",
-    ]
+    enemySlots = ["","","","","",""]
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
     enemyArrayPositionsAlreadyWarned = (
