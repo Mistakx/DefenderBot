@@ -42,7 +42,7 @@ class Calibration:
     enemyLineBlue = 36  # Parameter used to walk the enemy line (25)
     enemyLineColor = Color.RED
     proportionalGain = 4.5  # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
-    turnCalibrationTo360 = 1000
+    turnCalibrationTo360 = 1050
     negativeTurnCalibration = 1
     followingMovementSpeed = 150
 
@@ -52,7 +52,7 @@ class Game:
     currentPosition = 0  # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    enemySlots = ["","","","","",""]
+    enemySlots = ["", "", "", "", "", ""]
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
     enemyArrayPositionsAlreadyWarned = (
@@ -67,7 +67,7 @@ horn.robot.settings(calibrationInstance.followingMovementSpeed, 1000, 1000, 1000
 
 
 #! Calibration
-# horn.robot.turn(1050)
+# horn.robot.turn(1060)
 # robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
 # calibration.printLineColorSensor(horn.lineColorSensor)
 # calibration.printEnemyColorSensor(horn.enemyColorSensor)

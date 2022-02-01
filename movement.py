@@ -434,7 +434,7 @@ def goBackwardsAndRotate(horn, calibration):
 
 # * Horn crossed enemy line. Sets itself up by walking forward a little, and then rotates to the enemy line.
 def setItselfAndRotate(horn, calibration):
-    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 1200)
+    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 1000)
     horn.ev3.speaker.beep()
     horn.robot.turn(
         calibratedTurn(-120 * calibration.negativeTurnCalibration, calibration)
