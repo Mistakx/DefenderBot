@@ -510,11 +510,11 @@ def attackEnemies(horn, calibration, gameInfo):
         if (numberOfEnemies >= 2) and (gameInfo.hornEnergy == 500):
 
             print("There are 2 or more enemies to attack. Attacking with full energy.")
+            
+            i = 0
+            while i < 6:
 
-            while gameInfo.hornEnergy > 350:
-
-                i = 0
-                while i < 6:
+                if gameInfo.hornEnergy > 350:
 
                     currentEnemy = gameInfo.enemySlots[i]
 
@@ -546,8 +546,9 @@ def attackEnemies(horn, calibration, gameInfo):
 
                         movement.goBackwardsAndRotate(horn, calibration)
                         gameInfo.currentPosition = i + 1
-
-                    i += 1
+                else:
+                    break
+                i += 1
 
         # Attack with remaining energy
         if (
@@ -560,10 +561,10 @@ def attackEnemies(horn, calibration, gameInfo):
                 "There are 2 or more enemies to attack. Attacking with remaining energy."
             )
 
-            while gameInfo.hornEnergy > 0:
-
-                i = 0
-                while i < 6:
+            i = 0
+            while i < 6:
+                
+                if gameInfo.hornEnergy > 0:
 
                     currentEnemy = gameInfo.enemySlots[i]
 
@@ -1001,22 +1002,22 @@ def playGame(horn, calibration, gameInfo):
 
         #! Board recognition
         # * If all enemies are enemies dead, scanned already, or a mixture of the two, then Horn doesn't need to recognize the board.
-        boardNeedsRecognition = False
-        i = 0
-        while (i < 6):
-            currentEnemy = gameInfo.enemySlots[i]
-            if ( (currentEnemy == "") or (currentEnemy == "No bottle") ):
-                boardNeedsRecognition = True
-            i = i + 1
+        # boardNeedsRecognition = False
+        # i = 0
+        # while (i < 6):
+        #     currentEnemy = gameInfo.enemySlots[i]
+        #     if ( (currentEnemy == "") or (currentEnemy == "No bottle") ):
+        #         boardNeedsRecognition = True
+        #     i = i + 1
 
-        if boardNeedsRecognition:
-            print("Board needs recognition.")
-            recognizeBoard(horn, calibration, gameInfo)
-            print(gameInfo.enemySlots)
-            print()
-            movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
-        else:
-            print("Board doesn't need recognition.\n")
+        # if boardNeedsRecognition:
+        #     print("Board needs recognition.")
+        #     recognizeBoard(horn, calibration, gameInfo)
+        #     print(gameInfo.enemySlots)
+        #     print()
+        #     movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        # else:
+        #     print("Board doesn't need recognition.\n")
 
         #! Horn attacks
         # * Finds if there are enemies to attack

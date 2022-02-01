@@ -48,11 +48,14 @@ class Calibration:
 
 
 class Game:
-    currentTurn = 0
+    currentTurn = 4
     currentPosition = 0  # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    enemySlots = ["", "", "", "", "", ""]
+    # enemySlots = ["", "", "", "", "", ""]
+    enemySlots = ['No bottle', {'n_attacks': 0, 'health': 50, 'type': 'Tank'}, 'Dead', 'Dead', 'No bottle', 'No bottle']
+    enemySlots = [{'n_attacks': 3, 'health': 100, 'type': 'Infantry'}, {'health': 50, 'type': 'Tank', 'n_attacks': 0}, 'Dead', 'Dead', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
+
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
     enemyArrayPositionsAlreadyWarned = (
