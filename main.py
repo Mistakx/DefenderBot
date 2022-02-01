@@ -48,7 +48,9 @@ class Game:
     enemySlots = ['Dead', 'No bottle', 'Dead', 'Dead', 'Dead', 'Dead']
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
-    # enemySlots = ['Dead', 'Dead', 'Dead', 'Dead', {'n_attacks': 1, 'health': 200, 'type': 'Tank'}, {'n_attacks': 0, 'health': 100, 'type': 'Tank'}]
+    enemyArrayPositionsAlreadyWarned = [] # This array contains the enemySlots array positions of the enemies that have already warned they are ouf of attacks
+
+
 calibrationInstance = Calibration()
 horn = Horn()
 gameInfo = Game()
@@ -79,3 +81,4 @@ game.playGame(horn, calibrationInstance, gameInfo)
 
 # TODO: If there is only one enemy that can be left, scan it and immediately attack it.
 # TODO: Only go to a slot to tell the user it doesn't have any attacks left one single time
+# TODO: Horn wins at the exact same moment of the attack

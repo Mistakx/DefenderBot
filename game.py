@@ -14,39 +14,26 @@ import attack
 import calibration
 import movement
 
-#! Heuristics
-# Optimum energy point - 333 energy at the end of the turn.
-# Life can surpass 750, is worth less than energy
-
-# Artillery (500 dmg, 50 hp):
-#   Sound (50 energy)
-#   Ratio: 10 Energy/HP
-#   Always attack
-
-# Infantry (300 dmg, 50 hp):
-#   2 Sound (50 energy, 50 energy and 50 hp)
-#   Headbutt (150 energy)
-#   Ratio: 2
-
-# Tank (400 dmg, 200hp)
-#   Crane (300 energy)
-#   Two Headbutt (150 energy, 150 energy and 50hp)
-#   Ratio: 1.33
-
-# Cure 1 - Ratio 0.5
-# Cure 2 - Ratio 0.66
-# Cure 3 - Ratio 1
-
-# Scenarios
-#* 6 Infantry: 
-# 3 Sounds, 300 + 150 damage
-
-# Worst case scenario: 6 tanks -
 
 #* There is still an enemy attacking next turn
 def enemyIsAttackingNextTurn(gameInfo, enemyArrayPosition):
     enemy = gameInfo.enemySlots[enemyArrayPosition]
     return ( (enemy != "") and (enemy != "No bottle") and (enemy != "Dead") and (enemy["n_attacks"] > 0) )
+
+#* Check if Horn has already warned the enemy array position is out of attacks
+def alreadyWarnedArrayPosition(gameInfo, enemyArrayPosition):
+
+    alreadyWarned = False
+
+    for (enemyArrayPositionAlreadyWarned in gameInfo.enemyArrayPositionsAlreadyWarned):
+
+        if (enemyArrayPosition == enemyArrayPositionAlreadyWarned):
+            alreadyWarned = True
+            break
+    
+    return alreadyWarned
+
+
 
 #* Checks if the game isn't over
 def gameIsStillOn(gameInfo):
@@ -645,19 +632,21 @@ def attackEnemies(horn, calibration, gameInfo):
         while True:
             horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
 
-#* Horn goes to the last enemy alive, with our without attacks, if it hasn't passed it yet
-def goToLastEnemyAlive(horn, calibration, gameInfo):
+#* Horn goes to the last enemy alive (with our without attacks), that hasn't warned the player that it is out of attacks, if it hasn't passed it yet
+def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):
 
     lastEnemyAliveArrayPosition = None
     i = 0
-    #! Finds the last enemy alive array position
+    #! Finds the last enemy alive array position (with or without attacks), that hasn't warned the player that it is out of attacks
     while (i < 6):
 
         currentEnemy = gameInfo.enemySlots[i] 
 
-        if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")): # Only get attacked by valid slots
-            lastEnemyAliveArrayPosition = i
-        
+        if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")):
+
+            if alreadyWarnedArrayPosition(gameInfo, i): 
+                lastEnemyAliveArrayPosition = i
+
         i += 1
 
     if (lastEnemyAliveArrayPosition != None):
@@ -680,53 +669,59 @@ def enemiesAttack(horn, calibration, gameInfo):
         currentEnemy = gameInfo.enemySlots[i] 
 
         # Horn goes to all alive enemies, with or without attacks left
-        if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle")): 
+        if ( (currentEnemy != "") and (currentEnemy != "Dead") and (currentEnemy != "No bottle") ): 
 
-            #* Horn goes to the enemy slot that is going to attack
-            movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
-            horn.ev3.speaker.beep()
+            # Check if Horn has already warned before that the enemy position is out of attacks 
+            if (alreadyWarnedArrayPosition(gameInfo, i) == False):
+
+                #* Horn goes to the enemy slot that is going to attack
+                movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed*1.0, i+1)
+                horn.ev3.speaker.beep()
 
 
-            #* Horn gets attacked
-            # TODO: Different sound for each enemy
-            if currentEnemy["n_attacks"] > 0:
+                #* Horn gets attacked
+                # TODO: Different sound for each enemy
+                if currentEnemy["n_attacks"] > 0:
 
-                # Infantry gives as much damage as its health
-                if (currentEnemy["type"] == "Infantry"):
+                    # Infantry gives as much damage as its health
+                    if (currentEnemy["type"] == "Infantry"):
 
-                    gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
-                    currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
-                    horn.ev3.speaker.play_file("./sounds/infantry.rsf")
+                        gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
+                        currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
+                        horn.ev3.speaker.play_file("./sounds/infantry.rsf")
 
-                # Tank gives as much damage as its health
-                if (currentEnemy["type"] == "Tank"):
-                    gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
-                    currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
-                    horn.ev3.speaker.play_file("./sounds/tank.rsf")
+                    # Tank gives as much damage as its health
+                    if (currentEnemy["type"] == "Tank"):
+                        gameInfo.hornHealth = gameInfo.hornHealth - currentEnemy["health"]
+                        currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
+                        horn.ev3.speaker.play_file("./sounds/tank.rsf")
 
-                # If artillery attacks, it always gives 500 damage
-                elif currentEnemy["type"] == "Artillery":
-                    gameInfo.hornHealth = gameInfo.hornHealth - 500
-                    currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
-                    horn.ev3.speaker.play_file(SoundFile.SONAR)
-                    horn.ev3.speaker.play_file("./sounds/artillery.rsf")
+                    # If artillery attacks, it always gives 500 damage
+                    elif currentEnemy["type"] == "Artillery":
+                        gameInfo.hornHealth = gameInfo.hornHealth - 500
+                        currentEnemy["n_attacks"] = currentEnemy["n_attacks"] - 1
+                        horn.ev3.speaker.play_file(SoundFile.SONAR)
+                        horn.ev3.speaker.play_file("./sounds/artillery.rsf")
 
+                else:
+                    horn.ev3.speaker.say("Enemy is out of attacks.")
+                    gameInfo.enemyArrayPositionsAlreadyWarned.append(i)
+
+                #* After being attacked, horn stops, letting the timeout of the follow main line function to count the same line twice. Horn walks forwards to avoid it.
+                movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 200)
+
+                print("Horn Health:", gameInfo.hornHealth)
+                print()
+                if (gameInfo.hornHealth <= 0):
+                    horn.ev3.speaker.play_file("./sounds/gameOver.rsf")
+                    while True:
+                        horn.ev3.light.on(Color.RED)
+                        wait(100)
+                        horn.ev3.light.on(Color.GREEN)
+                        wait(100)
             else:
-                horn.ev3.speaker.say("Enemy is out of attacks.")
+                print("Horn has already warned that the slot " + str(i+1) + "is out of attacks.\n")
 
-            #* After being attacked, horn stops, letting the timeout of the follow main line function to count the same line twice. Horn walks forwards to avoid it.
-            movement.followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 200)
-
-            print("Horn Health:", gameInfo.hornHealth)
-            print()
-            if (gameInfo.hornHealth <= 0):
-                horn.ev3.speaker.play_file("./sounds/gameOver.rsf")
-                while True:
-                    horn.ev3.light.on(Color.RED)
-                    wait(100)
-                    horn.ev3.light.on(Color.GREEN)
-                    wait(100)
-        
         i -= 1
 
     return
@@ -763,7 +758,7 @@ def playGame(horn, calibration, gameInfo):
             print("Board doesn't need recognition.\n")
 
 
-        # #! Horn attacks
+        #! Horn attacks
         #* Finds if there are enemies to attack
         thereAreEnemiesToAttack = False
         i = 0
@@ -783,32 +778,36 @@ def playGame(horn, calibration, gameInfo):
         else:
             print("There are no enemies to attack.\n")
 
-
-        #! Enemy attacks
+        #! Horn gets attacked
         thereAreEnemiesThatAttackHorn = False
+        thereAreEnemiesAliveOutOfAttacks = False
+
         i = 0
         while (i < 6):
+            
             currentEnemy = gameInfo.enemySlots[i]
-            if enemyIsAttackingNextTurn(gameInfo, i):
+
+            if enemyIsAttackingNextTurn(gameInfo, i): # Enemy is attacking horn next turn
                 thereAreEnemiesThatAttackHorn = True
+
+            elif ( (currentEnemy != "") and (currentEnemy != "No bottle") and (currentEnemy != "Dead") and (currentEnemy["n_attacks"] == 0) ): # Enemy is warning Horn next turn
+                thereAreEnemiesAliveOutOfAttacks = True
+
             i = i + 1
 
-        if thereAreEnemiesThatAttackHorn:
+
+        # TODO: There are no enemies to attack Horn, but there are enemies out of attacks, it should go to the last alive to say it doesn't have attacks
+        if (thereAreEnemiesThatAttackHorn or thereAreEnemiesAliveOutOfAttacks):
             print("There are enemies that attack Horn.\n")
-            goToLastEnemyAlive(horn, calibration, gameInfo)
+            goToLastEnemyAliveNotWarned(horn, calibration, gameInfo)
             movement.walksForwardsAndRotatesToPointBackward(horn, calibration)
             enemiesAttack(horn, calibration, gameInfo)
             movement.followMainLineBackUntilEnemyLine(False, horn, calibration, gameInfo, calibration.followingMovementSpeed, 1)
             movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
             print(gameInfo.enemySlots)
             print()
-
         else:
             print("There are no enemies that attack Horn.\n")
-
-
-
-
 
     while True:
         horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
