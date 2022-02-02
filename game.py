@@ -70,14 +70,12 @@ def gameIsStillOn(gameInfo):
             if (currentEnemy == "") or (
                 currentEnemy == "No bottle"
             ):  # Slot still hasn't had enemy, so the game is still on
-                gameIsStillOn = True
+                return True
 
             elif enemyIsAttackingNextTurn(gameInfo, i):
-                gameIsStillOn = True
+                return True
 
             i += 1
-
-        return gameIsStillOn
 
     return False
 
@@ -101,7 +99,7 @@ def recognizeBoard(horn, calibration, gameInfo):
                 horn,
                 calibration,
                 gameInfo,
-                calibration.followingMovementSpeed * 2.0,
+                calibration.followingMovementSpeed * 1.7,
                 i + 1,
             )
             # horn.ev3.speaker.beep()
@@ -268,7 +266,7 @@ def attackEnemies(horn, calibration, gameInfo):
                 horn,
                 calibration,
                 gameInfo,
-                calibration.followingMovementSpeed * 2.0,
+                calibration.followingMovementSpeed * 1.7,
                 tempEnemyArrayPosition + 1,
             )
             # horn.ev3.speaker.beep()
@@ -390,7 +388,7 @@ def attackEnemies(horn, calibration, gameInfo):
                     horn,
                     calibration,
                     gameInfo,
-                    calibration.followingMovementSpeed * 2.0,
+                    calibration.followingMovementSpeed * 1.7,
                     slotToAttack,
                 )
                 # horn.ev3.speaker.beep()
@@ -476,7 +474,7 @@ def attackEnemies(horn, calibration, gameInfo):
                     horn,
                     calibration,
                     gameInfo,
-                    calibration.followingMovementSpeed * 2.0,
+                    calibration.followingMovementSpeed * 1.7,
                     slotToAttack,
                 )
                 # horn.ev3.speaker.beep()
@@ -525,7 +523,7 @@ def attackEnemies(horn, calibration, gameInfo):
                             horn,
                             calibration,
                             gameInfo,
-                            calibration.followingMovementSpeed * 2.0,
+                            calibration.followingMovementSpeed * 1.7,
                             i + 1,
                         )
                         # horn.ev3.speaker.beep()
@@ -575,7 +573,7 @@ def attackEnemies(horn, calibration, gameInfo):
                             horn,
                             calibration,
                             gameInfo,
-                            calibration.followingMovementSpeed * 2.0,
+                            calibration.followingMovementSpeed * 1.7,
                             i + 1,
                         )
                         # horn.ev3.speaker.beep()
@@ -597,7 +595,7 @@ def attackEnemies(horn, calibration, gameInfo):
                         movement.goBackwardsAndRotate(horn, calibration)
                         gameInfo.currentPosition = i + 1
 
-                    i += 1
+                i += 1
 
     # Attack an enemy if non of the other conditions apply
     def attackOneEnemy(horn, calibration, gameInfo):
@@ -633,7 +631,7 @@ def attackEnemies(horn, calibration, gameInfo):
                         horn,
                         calibration,
                         gameInfo,
-                        calibration.followingMovementSpeed * 2.0,
+                        calibration.followingMovementSpeed * 1.7,
                         i + 1,
                     )
                     # horn.ev3.speaker.beep()
@@ -684,7 +682,7 @@ def attackEnemies(horn, calibration, gameInfo):
                         horn,
                         calibration,
                         gameInfo,
-                        calibration.followingMovementSpeed * 2.0,
+                        calibration.followingMovementSpeed * 1.7,
                         i + 1,
                     )
                     # horn.ev3.speaker.beep()
@@ -734,7 +732,7 @@ def attackEnemies(horn, calibration, gameInfo):
                         horn,
                         calibration,
                         gameInfo,
-                        calibration.followingMovementSpeed * 2.0,
+                        calibration.followingMovementSpeed * 1.7,
                         i + 1,
                     )
                     # horn.ev3.speaker.beep()
@@ -787,7 +785,7 @@ def attackEnemies(horn, calibration, gameInfo):
                         horn,
                         calibration,
                         gameInfo,
-                        calibration.followingMovementSpeed * 2.0,
+                        calibration.followingMovementSpeed * 1.7,
                         i + 1,
                     )
                     # horn.ev3.speaker.beep()
@@ -882,7 +880,7 @@ def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):
             horn,
             calibration,
             gameInfo,
-            calibration.followingMovementSpeed * 2.0,
+            calibration.followingMovementSpeed * 1.7,
             lastEnemyAliveNotWarnedArrayPosition + 1,
         )
 
@@ -1002,22 +1000,22 @@ def playGame(horn, calibration, gameInfo):
 
         #! Board recognition
         # * If all enemies are enemies dead, scanned already, or a mixture of the two, then Horn doesn't need to recognize the board.
-        # boardNeedsRecognition = False
-        # i = 0
-        # while (i < 6):
-        #     currentEnemy = gameInfo.enemySlots[i]
-        #     if ( (currentEnemy == "") or (currentEnemy == "No bottle") ):
-        #         boardNeedsRecognition = True
-        #     i = i + 1
+        boardNeedsRecognition = False
+        i = 0
+        while (i < 6):
+            currentEnemy = gameInfo.enemySlots[i]
+            if ( (currentEnemy == "") or (currentEnemy == "No bottle") ):
+                boardNeedsRecognition = True
+            i = i + 1
 
-        # if boardNeedsRecognition:
-        #     print("Board needs recognition.")
-        #     recognizeBoard(horn, calibration, gameInfo)
-        #     print(gameInfo.enemySlots)
-        #     print()
-        #     movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
-        # else:
-        #     print("Board doesn't need recognition.\n")
+        if boardNeedsRecognition:
+            print("Board needs recognition.")
+            recognizeBoard(horn, calibration, gameInfo)
+            print(gameInfo.enemySlots)
+            print()
+            movement.rotateAndGoToBeggining(horn, calibration, gameInfo)
+        else:
+            print("Board doesn't need recognition.\n")
 
         #! Horn attacks
         # * Finds if there are enemies to attack

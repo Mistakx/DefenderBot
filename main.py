@@ -48,13 +48,13 @@ class Calibration:
 
 
 class Game:
-    currentTurn = 4
+    currentTurn = 0
     currentPosition = 0  # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    # enemySlots = ["", "", "", "", "", ""]
-    enemySlots = ['No bottle', {'n_attacks': 0, 'health': 50, 'type': 'Tank'}, 'Dead', 'Dead', 'No bottle', 'No bottle']
-    enemySlots = [{'n_attacks': 3, 'health': 100, 'type': 'Infantry'}, {'health': 50, 'type': 'Tank', 'n_attacks': 0}, 'Dead', 'Dead', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
+    enemySlots = ["", "", "", "", "", ""]
+    # enemySlots = ['No bottle', {'n_attacks': 0, 'health': 50, 'type': 'Tank'}, 'Dead', 'Dead', 'No bottle', 'No bottle']
+    # enemySlots = [{'n_attacks': 3, 'health': 100, 'type': 'Infantry'}, {'health': 50, 'type': 'Tank', 'n_attacks': 0}, 'Dead', 'Dead', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
 
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
@@ -90,6 +90,13 @@ horn.robot.settings(calibrationInstance.followingMovementSpeed, 1000, 1000, 1000
 
 #! Play game
 game.playGame(horn, calibrationInstance, gameInfo)
-
+# movement.followMainLineUntilEnemyLine(
+#     False,
+#     horn,
+#     calibrationInstance,
+#     gameInfo,
+#     calibrationInstance.followingMovementSpeed * 1.7,
+#     6,
+# )
 # TODO: If there is only one enemy that can be left, scan it and immediately attack it.
 # TODO: Horn wins at the exact same moment of the attack.
