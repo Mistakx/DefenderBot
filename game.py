@@ -406,7 +406,8 @@ def attackEnemies(horn, calibration, gameInfo):
                 movement.goBackwardsAndRotate(horn, calibration)
                 gameInfo.currentPosition = slotToAttack
 
-        if (
+        # Attacking with remaining energy
+        elif (
             (numberOfArtilleriesReady >= 1)
             and (gameInfo.hornEnergy > 0)
             and (gameInfo.usingRemainingEnergy)
@@ -549,7 +550,7 @@ def attackEnemies(horn, calibration, gameInfo):
                 i += 1
 
         # Attack with remaining energy
-        if (
+        elif (
             (numberOfEnemies >= 2)
             and (gameInfo.hornEnergy > 0)
             and (gameInfo.usingRemainingEnergy)
