@@ -53,8 +53,6 @@ class Game:
     hornHealth = 750
     hornEnergy = 500
     enemySlots = ["", "", "", "", "", ""]
-    # enemySlots = ['No bottle', {'n_attacks': 0, 'health': 50, 'type': 'Tank'}, 'Dead', 'Dead', 'No bottle', 'No bottle']
-    # enemySlots = [{'n_attacks': 3, 'health': 100, 'type': 'Infantry'}, {'health': 50, 'type': 'Tank', 'n_attacks': 0}, 'Dead', 'Dead', 'No bottle', {'n_attacks': 2, 'health': 200, 'type': 'Tank'}]
 
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
@@ -80,16 +78,26 @@ horn.robot.settings(calibrationInstance.followingMovementSpeed, 1000, 1000, 1000
 # ev3.speaker.say("For you sir, I'm always ready.")
 # ev3.light.on(Color.RED)
 
-# light_thread = Thread(target=aesthetics.light, args=(ev3,))
+# light_thread = Thread(target=aesthetics.light, args=(horn,))
 # light_thread.start()
-# logo_thread = Thread(target=aesthetics.logo, args=(ev3,))
+# logo_thread = Thread(target=aesthetics.logo, args=(horn,))
 # logo_thread.start()
-# sound_thread = Thread(target=sound.tokio, args=(horn.ev3,))
-# sound_thread.start()
-# wait(100000000)
+
+aesthetics.celebration(horn)
+wait(100000000)
+
+# while True:
+#     horn.robot.turn(100000)
+    # horn.robot.straight(30)
+    # horn.robot.straight(-30)
+
+
+    # wait(1)
+    # horn.robot.turn(-500)
+
 
 #! Play game
-game.playGame(horn, calibrationInstance, gameInfo)
+# game.playGame(horn, calibrationInstance, gameInfo)
 # movement.followMainLineUntilEnemyLine(
 #     False,
 #     horn,
@@ -98,5 +106,9 @@ game.playGame(horn, calibrationInstance, gameInfo)
 #     calibrationInstance.followingMovementSpeed * 1.7,
 #     6,
 # )
+
+
+
+
 # TODO: If there is only one enemy that can be left, scan it and immediately attack it.
 # TODO: Horn wins at the exact same moment of the attack.

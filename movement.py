@@ -392,7 +392,7 @@ def followEnemyLineBackUntilBlack(horn, calibration, followingMovementSpeed):
 
 # * Horn walks backwards a little, and rotates to point forwards
 def walksBackwardsAndRotatesToPointForward(horn, calibration):
-    followMainLineBackTime(horn, calibration, calibration.followingMovementSpeed, 2700)
+    followMainLineBackTime(horn, calibration, calibration.followingMovementSpeed, 2200)
     horn.ev3.speaker.beep()
     horn.robot.turn(calibratedTurn(170, calibration))
 
@@ -413,7 +413,7 @@ def rotateAndGoToBeggining(horn, calibration, gameInfo):
     walksForwardsAndRotatesToPointBackward(horn, calibration)
     horn.ev3.speaker.beep()
     followMainLineBackUntilEnemyLine(
-        False, horn, calibration, gameInfo, calibration.followingMovementSpeed * 1.0, 1
+        False, horn, calibration, gameInfo, calibration.followingMovementSpeed * 1.7, 1
     )
     # Doesn't need a beep because reaching the first enemy line in the last function beeps
     walksBackwardsAndRotatesToPointForward(horn, calibration)

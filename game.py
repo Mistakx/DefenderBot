@@ -817,9 +817,9 @@ def attackEnemies(horn, calibration, gameInfo):
     gameInfo.alreadyAttackedThisTurn = False
 
     if gameInfo.alreadyAttackedThisTurn == False:
-        fourEnemiesKilled(horn, calibration, gameInfo)
-    if gameInfo.alreadyAttackedThisTurn == False:
         attackArtilleriesAndRemaining(horn, calibration, gameInfo)
+    if gameInfo.alreadyAttackedThisTurn == False:
+        fourEnemiesKilled(horn, calibration, gameInfo)
     if gameInfo.alreadyAttackedThisTurn == False:
         attackTwoOrMoreEnemies(horn, calibration, gameInfo)
     if gameInfo.alreadyAttackedThisTurn == False:
@@ -921,7 +921,7 @@ def enemiesAttackAndWarn(horn, calibration, gameInfo):
                     horn,
                     calibration,
                     gameInfo,
-                    calibration.followingMovementSpeed * 2.0,
+                    calibration.followingMovementSpeed * 1.7,
                     i + 1,
                 )
                 # horn.ev3.speaker.beep()
@@ -1084,7 +1084,7 @@ def playGame(horn, calibration, gameInfo):
                 horn,
                 calibration,
                 gameInfo,
-                calibration.followingMovementSpeed*2.0,
+                calibration.followingMovementSpeed*1.7,
                 1,
             )
             movement.walksBackwardsAndRotatesToPointForward(horn, calibration)
