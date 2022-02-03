@@ -906,6 +906,9 @@ def attackEnemies(horn, calibration, gameInfo):
 
         i += 1
 
+    if numberOfDeadOrOutOfAttacksEnemies == 6:
+        aesthetics.turnHornAndCrane(horn)
+
 
 # * Horn goes to the last enemy alive (with our without attacks), that hasn't warned the player that it is out of attacks, if it hasn't passed it yet
 def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):

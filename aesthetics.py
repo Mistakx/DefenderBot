@@ -33,7 +33,10 @@ def light(horn):
         wait(100)
 
 def turnHornAndCrane(horn):
+
+    horn.robot.stop()
     horn.craneMotor.run_angle(400, 325000, then=Stop.HOLD, wait=False)
+    horn.leftMotor.run(150)
     horn.leftMotor.run(150)
     horn.rightMotor.run(-150)
     horn.ev3.speaker.set_volume(10000, which='_all_')
