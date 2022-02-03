@@ -52,7 +52,8 @@ class Game:
     currentPosition = 0  # Position 0 - Positioned before the first enemy line
     hornHealth = 750
     hornEnergy = 500
-    enemySlots = ["", "", "", "", "", ""]
+    # enemySlots = ["", "", "", "", "", ""]
+    enemySlots = ['Dead', 'Dead', {'strength': 500, 'type': 'Artillery', 'health': 50, 'n_attacks': 1}, 'Dead', {'n_attacks': 3, 'health': 100, 'type': 'Infantry'}, {'health': 50, 'type': 'Tank', 'n_attacks': 0}]
     # enemySlots = ["Dead", "Dead", "Dead", "Dead", "", ""]
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True

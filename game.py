@@ -19,6 +19,7 @@ from pybricks.tools import DataLog, StopWatch, wait
 import attack
 import calibration
 import movement
+import aesthetics
 
 
 #! Helper functions
@@ -399,7 +400,32 @@ def attackEnemies(horn, calibration, gameInfo):
                 movement.followEnemyLineUntilBottle(
                     False, False, horn, calibration, calibration.followingMovementSpeed
                 )
-                attack.soundAttack(horn, gameInfo, slotToAttack - 1)
+
+                
+                # Counts the number of dead enemies
+                numberOfDeadEnemies = 0
+                i = 0
+                while i < 6:
+                    currentEnemy = gameInfo.enemySlots[i]
+                    if currentEnemy == "Dead":
+                        numberOfDeadEnemies += 1
+                    i += 1
+
+                if numberOfDeadEnemies == 5 and gameInfo.hornEnergy >= 300:
+                    attack.craneAttack(
+                    False,
+                    horn,
+                    calibration,
+                    gameInfo,
+                    slotToAttack - 1,
+                    calibration.followingMovementSpeed,
+                    150,
+                )
+
+                else:
+                    attack.soundAttack(horn, gameInfo, slotToAttack - 1)
+                    
+
                 gameInfo.alreadyAttackedThisTurn = True
                 horn.ev3.speaker.beep()
 
@@ -430,7 +456,8 @@ def attackEnemies(horn, calibration, gameInfo):
             # Add to the array while:
             # Number of non artilleries added hasn't reached the number of attacks possible
             # Number of non artilleries added hasn't reached the number of total non artilleries in the board
-            # TODO: Verify
+
+
             while (
                 numberOfNonArtilleriesAddedToArray < numberOfAttacksToNonArtilleries
             ) and (numberOfNonArtilleriesAddedToArray < numberOfNonArtilleriesReady):
@@ -486,7 +513,30 @@ def attackEnemies(horn, calibration, gameInfo):
                 movement.followEnemyLineUntilBottle(
                     False, False, horn, calibration, calibration.followingMovementSpeed
                 )
-                attack.soundAttack(horn, gameInfo, slotToAttack - 1)
+                
+                # Counts the number of dead enemies
+                numberOfDeadEnemies = 0
+                i = 0
+                while i < 6:
+                    currentEnemy = gameInfo.enemySlots[i]
+                    if currentEnemy == "Dead":
+                        numberOfDeadEnemies += 1
+                    i += 1
+
+                if numberOfDeadEnemies == 5 and gameInfo.hornEnergy >= 300:
+                    attack.craneAttack(
+                    False,
+                    horn,
+                    calibration,
+                    gameInfo,
+                    slotToAttack - 1,
+                    calibration.followingMovementSpeed,
+                    150,
+                )
+
+                else:
+                    attack.soundAttack(horn, gameInfo, slotToAttack - 1)
+
                 gameInfo.alreadyAttackedThisTurn = True
                 horn.ev3.speaker.beep()
 
@@ -816,10 +866,14 @@ def attackEnemies(horn, calibration, gameInfo):
         return True
     gameInfo.alreadyAttackedThisTurn = False
 
-    attackArtilleriesAndRemaining(horn, calibration, gameInfo)
-    fourEnemiesKilled(horn, calibration, gameInfo)
-    attackTwoOrMoreEnemies(horn, calibration, gameInfo)
-    attackOneEnemy(horn, calibration, gameInfo)
+    if gameInfo.alreadyAttackedThisTurn == False:
+        attackArtilleriesAndRemaining(horn, calibration, gameInfo)
+    if gameInfo.alreadyAttackedThisTurn == False:
+        fourEnemiesKilled(horn, calibration, gameInfo)
+    if gameInfo.alreadyAttackedThisTurn == False:
+        attackTwoOrMoreEnemies(horn, calibration, gameInfo)
+    if gameInfo.alreadyAttackedThisTurn == False:
+        attackOneEnemy(horn, calibration, gameInfo)
 
     #! Counts the number of enemies dead or out of attacks
     numberOfDeadOrOutOfAttacksEnemies = 0
@@ -837,9 +891,6 @@ def attackEnemies(horn, calibration, gameInfo):
 
         i += 1
 
-    if numberOfDeadOrOutOfAttacksEnemies == 6:
-        #* Victory
-        aesthetics.turnHornAndCrane(horn)
 
 # * Horn goes to the last enemy alive (with our without attacks), that hasn't warned the player that it is out of attacks, if it hasn't passed it yet
 def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):
@@ -1107,5 +1158,5 @@ def playGame(horn, calibration, gameInfo):
                 print("Horn is already at the beginning of the board.\n")
 
 
-    # Victory
+    #* Victory
     aesthetics.turnHornAndCrane(horn)
