@@ -509,7 +509,7 @@ def attackEnemies(horn, calibration, gameInfo):
         if (numberOfEnemies >= 2) and (gameInfo.hornEnergy == 500):
 
             print("There are 2 or more enemies to attack. Attacking with full energy.")
-            
+
             i = 0
             while i < 6:
 
@@ -562,7 +562,7 @@ def attackEnemies(horn, calibration, gameInfo):
 
             i = 0
             while i < 6:
-                
+
                 if gameInfo.hornEnergy > 0:
 
                     currentEnemy = gameInfo.enemySlots[i]
@@ -816,14 +816,10 @@ def attackEnemies(horn, calibration, gameInfo):
         return True
     gameInfo.alreadyAttackedThisTurn = False
 
-    if gameInfo.alreadyAttackedThisTurn == False:
-        attackArtilleriesAndRemaining(horn, calibration, gameInfo)
-    if gameInfo.alreadyAttackedThisTurn == False:
-        fourEnemiesKilled(horn, calibration, gameInfo)
-    if gameInfo.alreadyAttackedThisTurn == False:
-        attackTwoOrMoreEnemies(horn, calibration, gameInfo)
-    if gameInfo.alreadyAttackedThisTurn == False:
-        attackOneEnemy(horn, calibration, gameInfo)
+    attackArtilleriesAndRemaining(horn, calibration, gameInfo)
+    fourEnemiesKilled(horn, calibration, gameInfo)
+    attackTwoOrMoreEnemies(horn, calibration, gameInfo)
+    attackOneEnemy(horn, calibration, gameInfo)
 
     #! Counts the number of enemies dead or out of attacks
     numberOfDeadOrOutOfAttacksEnemies = 0
@@ -842,9 +838,8 @@ def attackEnemies(horn, calibration, gameInfo):
         i += 1
 
     if numberOfDeadOrOutOfAttacksEnemies == 6:
-        while True:
-            horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
-
+        #* Victory
+        aesthetics.turnHornAndCrane(horn)
 
 # * Horn goes to the last enemy alive (with our without attacks), that hasn't warned the player that it is out of attacks, if it hasn't passed it yet
 def goToLastEnemyAliveNotWarned(horn, calibration, gameInfo):
@@ -969,12 +964,12 @@ def enemiesAttackAndWarn(horn, calibration, gameInfo):
                 print("Horn Health:", gameInfo.hornHealth)
                 print()
                 if gameInfo.hornHealth <= 0:
-                    horn.ev3.speaker.play_file("./sounds/gameOver.rsf")
                     while True:
-                        horn.ev3.light.on(Color.RED)
-                        wait(100)
-                        horn.ev3.light.on(Color.GREEN)
-                        wait(100)
+                        horn.ev3.speaker.play_file("./sounds/gameOver.rsf")
+                    #     horn.ev3.light.on(Color.RED)
+                    #     wait(100)
+                    #     horn.ev3.light.on(Color.GREEN)
+                    #     wait(100)
             else:
                 print(
                     "Horn has already warned that the slot "
@@ -988,7 +983,6 @@ def enemiesAttackAndWarn(horn, calibration, gameInfo):
 
 
 #! Horn plays the game
-
 
 def playGame(horn, calibration, gameInfo):
 
@@ -1111,8 +1105,7 @@ def playGame(horn, calibration, gameInfo):
             elif gameInfo.currentPosition == 0: #! Horn isn't getting attacked or warned, and is at the beginning of the board
                 print("There are no enemies that attack or warn Horn.")
                 print("Horn is already at the beginning of the board.\n")
-                
-                
 
-    while True:
-        horn.ev3.speaker.play_file(SoundFile.MAGIC_WAND)
+
+    # Victory
+    aesthetics.turnHornAndCrane(horn)

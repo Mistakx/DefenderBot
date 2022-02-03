@@ -19,14 +19,13 @@ import game
 import movement
 
 
-# def speak(ev3):
-#     ev3.speaker.set_volume(100, which="_all_")
-#     ev3.speaker.set_speech_options(language="pt", voice=None, speed=20, pitch=None)
-#     ev3.speaker.say("TRAVA NA POSE OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!")
+def speak(ev3):
+    ev3.speaker.set_volume(100, which="_all_")
+    ev3.speaker.set_speech_options(language="pt", voice=None, speed=20, pitch=None)
+    ev3.speaker.say("TRAVA NA POSE OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!")
 
 
 def tokio(horn):
-    # while True:
     horn.ev3.speaker.set_volume(10000, which='_all_')
     horn.ev3.speaker.play_file("./tokio/primeiro.rsf")
     horn.ev3.speaker.play_file("./tokio/segundo.rsf")

@@ -42,7 +42,7 @@ class Calibration:
     enemyLineBlue = 36  # Parameter used to walk the enemy line (25)
     enemyLineColor = Color.RED
     proportionalGain = 4.5  # Default 4: If the light value deviates from the threshold by 10, the robot steers at 10*1.2 = 12 degrees per second.
-    turnCalibrationTo360 = 1050
+    turnCalibrationTo360 = 1150
     negativeTurnCalibration = 1
     followingMovementSpeed = 150
 
@@ -53,7 +53,7 @@ class Game:
     hornHealth = 750
     hornEnergy = 500
     enemySlots = ["", "", "", "", "", ""]
-
+    # enemySlots = ["Dead", "Dead", "Dead", "Dead", "", ""]
     usingRemainingEnergy = False
     alreadyAttackedThisTurn = True
     enemyArrayPositionsAlreadyWarned = (
@@ -68,47 +68,26 @@ horn.robot.settings(calibrationInstance.followingMovementSpeed, 1000, 1000, 1000
 
 
 #! Calibration
-# horn.robot.turn(1060)
+# horn.robot.turn(1040)
 # robot.turn(movement.calibratedTurn(-200*negativeTurnCalibration, turnCalibrationTo360))
 # calibration.printLineColorSensor(horn.lineColorSensor)
 # calibration.printEnemyColorSensor(horn.enemyColorSensor)
 # calibration.printDistance(horn.distanceSensor)
 
 #! Aesthetics
-# ev3.speaker.say("For you sir, I'm always ready.")
-# ev3.light.on(Color.RED)
-
 # light_thread = Thread(target=aesthetics.light, args=(horn,))
 # light_thread.start()
 # logo_thread = Thread(target=aesthetics.logo, args=(horn,))
 # logo_thread.start()
-
-aesthetics.celebration(horn)
-wait(100000000)
-
-# while True:
-#     horn.robot.turn(100000)
-    # horn.robot.straight(30)
-    # horn.robot.straight(-30)
-
-
-    # wait(1)
-    # horn.robot.turn(-500)
+# sound_thread = Thread(target=sound.tokio, args=(horn,))
+# sound_thread.start()
+# turn_thread = Thread(target=aesthetics.turnHornAndCrane, args=(horn,))
+# turn_thread.start()
+# wait(100000000)
 
 
 #! Play game
-# game.playGame(horn, calibrationInstance, gameInfo)
-# movement.followMainLineUntilEnemyLine(
-#     False,
-#     horn,
-#     calibrationInstance,
-#     gameInfo,
-#     calibrationInstance.followingMovementSpeed * 1.7,
-#     6,
-# )
-
-
-
+game.playGame(horn, calibrationInstance, gameInfo)
 
 # TODO: If there is only one enemy that can be left, scan it and immediately attack it.
 # TODO: Horn wins at the exact same moment of the attack.

@@ -17,7 +17,6 @@ import color
 
 #! Turn
 
-
 def calibratedTurn(turnAngle, calibration):
     # * Positive turn - Left | Negative turn - Right
 
@@ -392,17 +391,17 @@ def followEnemyLineBackUntilBlack(horn, calibration, followingMovementSpeed):
 
 # * Horn walks backwards a little, and rotates to point forwards
 def walksBackwardsAndRotatesToPointForward(horn, calibration):
-    followMainLineBackTime(horn, calibration, calibration.followingMovementSpeed, 2200)
+    followMainLineBackTime(horn, calibration, calibration.followingMovementSpeed, 2500)
     horn.ev3.speaker.beep()
-    horn.robot.turn(calibratedTurn(170, calibration))
+    horn.robot.turn(calibratedTurn(160, calibration))
 
 
 # * Horn walks forwards a little, and rotates to point backwards
 def walksForwardsAndRotatesToPointBackward(horn, calibration):
-    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2200)
+    followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 2300)
     horn.ev3.speaker.beep()
     horn.robot.turn(
-        calibratedTurn(-170 * calibration.negativeTurnCalibration, calibration)
+        calibratedTurn(-150 * calibration.negativeTurnCalibration, calibration)
     )
 
 
@@ -427,16 +426,14 @@ def goBackwardsAndRotate(horn, calibration):
     followEnemyLineBackUntilBlack(horn, calibration, calibration.followingMovementSpeed)
     horn.ev3.speaker.beep()
     horn.robot.turn(
-        calibratedTurn(90 * calibration.negativeTurnCalibration, calibration)
+        calibratedTurn(80 * calibration.negativeTurnCalibration, calibration)
     )
-    horn.ev3.speaker.beep()
-
 
 # * Horn crossed enemy line. Sets itself up by walking forward a little, and then rotates to the enemy line.
 def setItselfAndRotate(horn, calibration):
     followMainLineTime(horn, calibration, calibration.followingMovementSpeed, 1000)
     horn.ev3.speaker.beep()
     horn.robot.turn(
-        calibratedTurn(-120 * calibration.negativeTurnCalibration, calibration)
+        calibratedTurn(-110 * calibration.negativeTurnCalibration, calibration)
     )
     horn.ev3.speaker.beep()
