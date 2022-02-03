@@ -402,16 +402,24 @@ def attackEnemies(horn, calibration, gameInfo):
                 )
 
                 
-                # Counts the number of dead enemies
-                numberOfDeadEnemies = 0
+                #! Counts the number of enemies dead or out of attacks
+                numberOfDeadOrOutOfAttacksEnemies = 0
                 i = 0
                 while i < 6:
                     currentEnemy = gameInfo.enemySlots[i]
                     if currentEnemy == "Dead":
-                        numberOfDeadEnemies += 1
+                        numberOfDeadOrOutOfAttacksEnemies += 1
+                    elif (
+                        (currentEnemy != "")
+                        and (currentEnemy != "No bottle")
+                        and (currentEnemy["n_attacks"] == 0)
+                    ):
+                        numberOfDeadOrOutOfAttacksEnemies += 1
+
                     i += 1
 
-                if numberOfDeadEnemies == 5 and gameInfo.hornEnergy >= 300:
+
+                if numberOfDeadOrOutOfAttacksEnemies == 5 and gameInfo.hornEnergy >= 300:
                     attack.craneAttack(
                     False,
                     horn,
@@ -514,16 +522,23 @@ def attackEnemies(horn, calibration, gameInfo):
                     False, False, horn, calibration, calibration.followingMovementSpeed
                 )
                 
-                # Counts the number of dead enemies
-                numberOfDeadEnemies = 0
+                #! Counts the number of enemies dead or out of attacks
+                numberOfDeadOrOutOfAttacksEnemies = 0
                 i = 0
                 while i < 6:
                     currentEnemy = gameInfo.enemySlots[i]
                     if currentEnemy == "Dead":
-                        numberOfDeadEnemies += 1
+                        numberOfDeadOrOutOfAttacksEnemies += 1
+                    elif (
+                        (currentEnemy != "")
+                        and (currentEnemy != "No bottle")
+                        and (currentEnemy["n_attacks"] == 0)
+                    ):
+                        numberOfDeadOrOutOfAttacksEnemies += 1
+
                     i += 1
 
-                if numberOfDeadEnemies == 5 and gameInfo.hornEnergy >= 300:
+                if numberOfDeadOrOutOfAttacksEnemies == 5 and gameInfo.hornEnergy >= 300:
                     attack.craneAttack(
                     False,
                     horn,
