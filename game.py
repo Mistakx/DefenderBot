@@ -970,13 +970,11 @@ def enemiesAttackAndWarn(horn, calibration, gameInfo):
             and (currentEnemy != "No bottle")
         ):
 
-            print("DEBUG: Horn to be attacked by: " + str(i + 1))
-
             # Check if Horn has already warned before that the enemy position is out of attacks
             if alreadyWarnedArrayPosition(gameInfo, i) == False:
 
                 print(
-                    "DEBUG: Horn to be attacked by (Didn't already warn): " + str(i + 1)
+                    "Horn to be attacked by (Didn't already warn): " + str(i + 1)
                 )
 
                 # * Horn goes to the enemy slot that is going to attack

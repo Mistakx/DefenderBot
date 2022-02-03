@@ -95,7 +95,7 @@ def craneAttack(
                 distanceToBottle = horn.distanceSensor.distance()
                 if log:
                     print("Looking if hit bottle: ", distanceToBottle)
-                if distanceToBottle > 400:
+                if distanceToBottle > 500:
 
                     horn.craneMotor.stop()
                     gameInfo.hornEnergy = gameInfo.hornEnergy - 300
