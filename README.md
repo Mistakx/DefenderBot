@@ -1,8 +1,8 @@
 Horn was a robot designed, built and programmed for the Artificial Intelligence class.
 Graded in 19.0/20.
 
+# Video of Horn playing the game
 [![Project](./assets/horn.jpeg)](https://youtu.be/LVTczzmjBmg)
-<!-- <iframe  title="YouTube video player" width="480" height="390" src="http://youtu.be/LVTczzmjBmg?autoplay=1" frameborder="0" allowfullscreen></iframe> -->
 
 # Heuristics
 - Horn always saves a minimum of 350 energy each turn, until he has killed 4 enemies (or they ran out of attacks).
